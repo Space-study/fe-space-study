@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 export default function LoadingPage() {
   return (
     <div>
       <h1>Loading...</h1>
     </div>
-  );
+  )
 }

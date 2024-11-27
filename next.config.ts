@@ -1,14 +1,14 @@
-import type { NextConfig } from "next";
-import path from "path";
+import type {NextConfig} from 'next'
+import path from 'path'
 
 const nextConfig: NextConfig = {
-  webpack: (config) => {
+  webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@src": path.resolve(__dirname, "src"), // Define the alias for `@src`
-    };
-    return config;
+      '@src': path.resolve(__dirname, 'src'), // Define the alias for `@src`
+    }
+    return config
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
