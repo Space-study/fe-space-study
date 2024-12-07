@@ -1,4 +1,4 @@
-import ExamplePageClient from '@/core/components/customer/ExamplePageClient'
+import ExamplePageClient from '@src/core/pages/customer/ExamplePageClient'
 import {fetchUsers} from '@src/core/services/example/exampleService'
 import React from 'react'
 

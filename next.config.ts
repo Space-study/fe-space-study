@@ -5,9 +5,18 @@ const nextConfig: NextConfig = {
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@src': path.resolve(__dirname, 'src'), // Define the alias for `@src`
+      '@src': path.resolve(__dirname, 'src'),
     }
     return config
+  },
+  redirects: async () => {
+    return [
+      {
+        source: '/home',
+        destination: '/home',
+        permanent: true,
+      },
+    ]
   },
 }
 
