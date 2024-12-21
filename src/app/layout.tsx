@@ -1,7 +1,7 @@
 'use client'
 
-import {ThemeProvider as NextThemesProvider} from 'next-themes'
 import {store} from '@src/core/redux/store'
+import {ThemeProvider as NextThemesProvider} from 'next-themes'
 import localFont from 'next/font/local'
 import React from 'react'
 import {Provider} from 'react-redux'
@@ -19,10 +19,7 @@ const geistMono = localFont({
   weight: '100 900',
 })
 
-function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+function ThemeProvider({children, ...props}: React.ComponentProps<typeof NextThemesProvider>) {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
