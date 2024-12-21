@@ -9,7 +9,7 @@ module.exports = {
     jsxSingleQuote: true,
     semi: false,
     printWidth: 100,
-    importOrder: ['^@/core/(.*)$', '^@/app/(.*)$', '^@/packages/space-study/(.*)$', '^-(.*)$', '^[./]'],
+    importOrder: ['^@/core/(.*)$', '^@/app/(.*)$', '^@/packages/rebo-(.*)$', '^[./]'],
     importOrderSeparation: true,
     importOrderSortSpecifiers: true,
     organizeImportsSkipDestructiveCodeActions: true,

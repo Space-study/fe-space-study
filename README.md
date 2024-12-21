@@ -61,9 +61,6 @@ root
 │   │   └── common/           # Shared components (e.g., buttons, modals)
 │   ├── constants/            # Application constants or TypeScript types/interfaces
 │   ├── hooks/                # Custom React hooks
-│   ├── page/                 # Use components to create pages
-│   │   ├── admin/            # Admin-specific pages
-│   │   └── customer/        # Customer-specific pages
 │   ├── services/   
 │   │   ├── example/          # Example services (share for each service backend)
 │   │   └── exampleService.ts      # Data-fetching and API logic example
