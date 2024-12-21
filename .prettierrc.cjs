@@ -13,7 +13,6 @@ module.exports = {
     importOrderSeparation: true,
     importOrderSortSpecifiers: true,
     organizeImportsSkipDestructiveCodeActions: true,
-    endOfLine: 'crlf',
     plugins: [
       require.resolve('@trivago/prettier-plugin-sort-imports'), // sort-imports-ignore are skipped. You can also ignore sections by using // sort-imports-begin-ignore and // sort-imports-end-ignore
       require.resolve('prettier-plugin-organize-imports'), //Files containing the substring // organize-imports-ignore or // tslint:disable:ordered-imports are skipped
