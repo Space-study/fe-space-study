@@ -1,5 +1,5 @@
 import {useTheme} from '@/core/hooks/useTheme'
-import React, {MouseEvent, ReactNode, use, useEffect, useState} from 'react'
+import React, {MouseEvent, ReactNode, useState} from 'react'
 import {MdClose} from 'react-icons/md'
 
 interface MovableCardProps {
@@ -44,7 +44,7 @@ export function MovableCard({className = '', children, visible, toggleCard}: Mov
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}>
-        <div className='flex justify-between items-center dark:bg-red-500'>
+        <div className='flex justify-between items-center bg-blue-500 dark:bg-red-500'>
           <div className='flex items-center justify-center h-4/5 aspect-square cursor-pointer rounded hover:border hover:border-gray-500'>
             <MdClose
               className={`${currentTheme === 'dark' ? 'text-white' : 'text-gray-600'}`}

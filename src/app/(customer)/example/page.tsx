@@ -6,5 +6,5 @@ import React from 'react'
 export default async function ExamplePage() {
   const users = await fetchUsers()
 
-  return <ExamplePageClient users={users} />
+  return <ExamplePageClient user={users[0]} />
 }

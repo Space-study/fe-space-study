@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface MeetingCardProps {
@@ -13,7 +14,15 @@ const MeetingCard = ({image, view, date, title, description, link}: MeetingCardP
   return (
     <div className='bg-white shadow rounded overflow-hidden'>
       <div className='relative'>
-        <img src={image} alt={title} className='w-full h-48 object-cover' />
+        <Image
+          src={image}
+          alt={title}
+          width={500}
+          height={192}
+          className='w-full h-48 object-cover'
+          layout='responsive'
+          objectFit='cover'
+        />
         <div className='absolute top-2 left-2 bg-red-500 text-white text-sm px-2 py-1 rounded'>
           {view}
         </div>

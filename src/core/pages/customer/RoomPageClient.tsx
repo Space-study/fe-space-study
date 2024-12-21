@@ -6,8 +6,7 @@ import {Music} from '@/core/components/customer/tools/Music'
 import {Spaces} from '@/core/components/customer/tools/Spaces'
 import {Tasks} from '@/core/components/customer/tools/Tasks'
 import {Timer} from '@/core/components/customer/tools/Timer'
-import {useTheme} from '@/core/hooks/useTheme'
-import React, {ReactNode, useEffect, useState} from 'react'
+import React, {ReactNode, useState} from 'react'
 
 interface RoomProps {
   children: ReactNode

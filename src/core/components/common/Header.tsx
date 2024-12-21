@@ -25,6 +25,11 @@ const Header = () => {
                   Room
                 </Link>
               </li>
+              <li>
+                <Link href='/example' className='text-gray-700 hover:text-red-500'>
+                  Example Redux
+                </Link>
+              </li>
               {/* <li className='relative group'>
                 <span className='text-gray-700 hover:text-red-500 cursor-pointer'>Pages</span>
                 <ul className='absolute hidden group-hover:block bg-white shadow rounded mt-2'>

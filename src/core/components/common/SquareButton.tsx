@@ -1,7 +1,7 @@
-import React, {ComponentType} from 'react'
+import React, {ComponentType, SVGProps} from 'react'
 
 interface SquareButtonProps {
-  icon: ComponentType<any>
+  icon: ComponentType<SVGProps<SVGSVGElement>>
   label: string
   onClick: () => void
   className?: string
@@ -9,14 +9,14 @@ interface SquareButtonProps {
 }
 
 interface IconButtonProps {
-  icon: ComponentType<any>
+  icon: ComponentType<SVGProps<SVGSVGElement>>
   onClick: () => void
   className?: string
   color?: string
 }
 
 interface ThemedButtonProps {
-  icon?: ComponentType<any>
+  icon?: ComponentType<SVGProps<SVGSVGElement>>
   label?: string
   onClick: () => void
   className?: string

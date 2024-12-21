@@ -1,6 +1,6 @@
 import {MovableCard} from '@/core/components/common/MovableCard'
 import {IconButton, ThemedButton} from '@/core/components/common/SquareButton'
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {FaCog, FaSync} from 'react-icons/fa'
 
 // Helper function for formatting digits
@@ -27,7 +27,7 @@ type TimerData = {
 }
 
 export const Timer: React.FC<TimerProps> = ({visible, toggleCard}) => {
-  const [intervalData, setIntervalData] = useState<IntervalData>({
+  const [intervalData] = useState<IntervalData>({
     pomodoro: 20 * 60,
     short: 5 * 60,
     long: 10 * 60,
