@@ -1,11 +1,11 @@
 'use client'
 
 import {store} from '@src/core/redux/store'
-import {ThemeProvider as NextThemesProvider} from 'next-themes'
 import localFont from 'next/font/local'
 import React from 'react'
 import {Provider} from 'react-redux'
 import './globals.css'
+import {ThemeProvider} from './shared/ThemeProvider'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -19,25 +19,10 @@ const geistMono = localFont({
   weight: '100 900',
 })
 
-function ThemeProvider({children, ...props}: React.ComponentProps<typeof NextThemesProvider>) {
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    // Avoid rendering until hydration is complete
-    return <>{children}</>
-  }
-
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
-}
-
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang='en' className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className='antialiased'>
+    <html lang='en'>
+      <body className='flex flex-col min-h-screen'>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
