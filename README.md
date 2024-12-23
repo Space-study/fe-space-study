@@ -45,9 +45,11 @@ root
 │   │    
 │   ├── customer/             # Customer-specific pages
 │   │   ├── example           # Folder still name router
-│   │   │   └── page.tsx      # explemple page ( like index)
+│   │   │   └── page.tsx      # call data return in folder service pass to components in folder pages
 │   │   ├── layout.tsx        # Customer layout
 │   │   └── page.tsx          # Customer dashboard
+│   ├── room/                 # Room-specific pages
+│   │   └── page.tsx          # Room page
 │   ├── shared/               # Shared layouts and error pages
 │   │   ├── ErrorBoundary.tsx        # Error boundary (error page)
 │   │   ├── SharedLayout.tsx         # Shared layout
@@ -62,8 +64,8 @@ root
 │   ├── constants/            # Application constants or TypeScript types/interfaces
 │   ├── hooks/                # Custom React hooks
 │   ├── services/   
-│   │   ├── example/          # Example services (share for each service backend)
-│   │   └── exampleService.ts      # Data-fetching and API logic example
+│   │   └── example/          # Example services (share for each service backend)
+│   │         └── exampleService.ts      # Data-fetching and API logic example
 │   └── utils/                # Utilities
 │       └── apiPath.ts        # API path generator
 ├── .env                      # Environment variables
