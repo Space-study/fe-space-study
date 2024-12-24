@@ -5,7 +5,7 @@ import {clearUser, setAuthentication, setUser} from '@/core/redux/slices/userSli
 import React, {useEffect, useState} from 'react'
 
 interface ExamplePageClientProps {
-  user: {name: {firstname: string; lastname: string}; email: string}
+  user: {username: string; email: string}
 }
 
 const ExamplePageClient: React.FC<ExamplePageClientProps> = ({user}) => {
@@ -25,9 +25,8 @@ const ExamplePageClient: React.FC<ExamplePageClientProps> = ({user}) => {
   // Dispatch action to set user if needed (only on the client)
   useEffect(() => {
     if (isClient && !userFromStore.name && !userFromStore.email && user) {
-      // Map name.firstname and name.lastname to username
-      const username = `${user.name.firstname} ${user.name.lastname}`
-      dispatch(setUser({name: username, email: user.email}))
+
+      dispatch(setUser({name: user.username, email: user.email}))
     }
   }, [dispatch, user, userFromStore, isClient])
 
