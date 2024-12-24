@@ -56,7 +56,7 @@ export const Chat: React.FC<ChatCardProps> = ({visible, toggleCard}) => {
               </span>
             </div>
             <p className='bg-neutral-100 p-3 rounded-lg text-neutral-800 text-sm'>
-              I'm good, thanks!
+              Im good, thanks!
             </p>
           </div>
           <div className='w-[32px] h-[32px] rounded-full bg-neutral-300 flex items-center justify-center text-neutral-600 font-medium'>

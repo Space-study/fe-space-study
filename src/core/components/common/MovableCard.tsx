@@ -1,4 +1,3 @@
-import {useTheme} from '@/core/hooks/useTheme'
 import React, {MouseEvent, ReactNode, useState} from 'react'
 import {MdClose} from 'react-icons/md'
 
