@@ -72,4 +72,4 @@ root
 ├── next.config.js            # Next.js configuration
 ├── tsconfig.json             # TypeScript configuration
 ├── package.json              # Project dependencies
-└── README.md                 # Documentation
+└── README.md                 # Documentation file
