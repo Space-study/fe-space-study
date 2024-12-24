@@ -71,5 +71,5 @@ root
 ├── .env                      # Environment variables
 ├── next.config.js            # Next.js configuration
 ├── tsconfig.json             # TypeScript configuration
-├── package.json              # Project dependencies
+├── package.json              # Project dependencies and configuration
 └── README.md                 # Documentation file for project
