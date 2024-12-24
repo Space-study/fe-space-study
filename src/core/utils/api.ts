@@ -1,5 +1,5 @@
 //https://fakestoreapi.com/products
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.example.com'
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jsonplaceholder.typicode.com/'
 
 export const apiPath = (...paths: string[]): string => {
   const normalizedPath = paths.map(path => path.replace(/^\/|\/$/g, '')).join('/')
