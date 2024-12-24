@@ -19,6 +19,15 @@ const meetings = [
     description: 'Morbi in libero blandit lectus cursus ullamcorper.',
     link: '/meeting-details',
   },
+  {
+    image:
+      'https://media.licdn.com/dms/image/v2/D4D12AQG8sF209pYlQA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1701409813124?e=2147483647&v=beta&t=rcK3hCpOLJA9xQYQJu0QuebFhIdFW9clcQSfjy0wJaw',
+    view: '5000',
+    date: 'Nov 14',
+    title: 'Online Teaching Techniques',
+    description: 'Morbi in libero blandit lectus cursus ullamcorper.',
+    link: '/meeting-details',
+  },
   // Add more meetings here...
 ]
 
