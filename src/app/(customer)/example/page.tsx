@@ -4,7 +4,10 @@ import React from 'react'
 
 // Server Component
 export default async function ExamplePage() {
-  const users = await fetchUsers()
+    const users = await fetchUsers();
+  if (!users || users.length === 0) {
+    return <div>No users found.</div>;
+  }
 
   return <ExamplePageClient user={users[0]} />
 }
