@@ -1,53 +1,59 @@
-import { ApiFailureResponse } from "@/core/types/api.type";
-import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import {ApiFailureResponse} from '@/core/types/api.type'
+import {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AdaptAxiosRequestConfig = AxiosRequestConfig & InternalAxiosRequestConfig<any>;
+type AdaptAxiosRequestConfig = AxiosRequestConfig & InternalAxiosRequestConfig<any>
 export const onRequest = (config: AdaptAxiosRequestConfig): AdaptAxiosRequestConfig => {
-  const accessToken = typeof window === "undefined" ? null : localStorage?.getItem("accessToken");
+  const accessToken = typeof window === 'undefined' ? null : localStorage?.getItem('accessToken')
   if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken || ""}`;
+    config.headers.Authorization = `Bearer ${accessToken || ''}`
   }
-  const element = document.getElementById("block-screen");
+  const element = document.getElementById('block-screen')
   if (element && element?.style?.display) {
-    element.style.display = "flex";
+    element.style.display = 'flex'
   }
-  return config;
-};
+  return config
+}
 export const onRequestError = (error: AxiosError): Promise<AxiosError> => {
-  return Promise.reject(error);
-};
+  return Promise.reject(error)
+}
 export const onResponse = (response: AxiosResponse): AxiosResponse => {
-  const element = document.getElementById("block-screen");
+  const element = document.getElementById('block-screen')
   if (element && element?.style?.display) {
-    element.style.display = "none";
+    element.style.display = 'none'
   }
-  return response;
-};
+  return response
+}
 export const onResponseError = (error: AxiosError<ApiFailureResponse>) => {
-  const element = document.getElementById("block-screen");
+  const element = document.getElementById('block-screen')
   if (element && element?.style?.display) {
-    element.style.display = "none";
+    element.style.display = 'none'
   }
-  const errorData: ApiFailureResponse | undefined = error?.response?.data;
-  if (errorData && errorData.errorType === "ACCESS_TOKEN_EXPIRED") {
+  const errorData: ApiFailureResponse | undefined = error?.response?.data
+  if (errorData && errorData.errorType === 'ACCESS_TOKEN_EXPIRED') {
     // !Todo: Get new access token from refresh token
-  } else if (errorData && errorData.errorType === "REFRESH_TOKEN_EXPIRED") {
-    console.log(`REFRESH_TOKEN_EXPIRED`);
+  } else if (errorData && errorData.errorType === 'REFRESH_TOKEN_EXPIRED') {
+    console.log(`REFRESH_TOKEN_EXPIRED`)
     // !Todo: Logout
   } else if (errorData && errorData.message) {
     // !Todo:Notification Error
     if (Array.isArray(errorData.message) && errorData?.message?.length > 0) {
-      console.error(errorData.message[0]);
+      console.error(errorData.message[0])
     } else {
-      console.error(errorData.message);
+      console.error(errorData.message)
     }
   } else {
-    console.error(error?.message);
+    console.error(error?.message)
   }
-  return Promise.reject(error);
-};
+  return Promise.reject(error)
+}
 export function setupInterceptorsTo(axiosInstance: AxiosInstance): AxiosInstance {
-  axiosInstance.interceptors.request.use(onRequest, onRequestError);
-  axiosInstance.interceptors.response.use(onResponse, onResponseError);
-  return axiosInstance;
+  axiosInstance.interceptors.request.use(onRequest, onRequestError)
+  axiosInstance.interceptors.response.use(onResponse, onResponseError)
+  return axiosInstance
 }

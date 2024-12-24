@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
   },
   //add domain src get imgage here
   images: {
-    domains: ['museumhack.com', 'media.licdn.com'],
+    domains: ['museumhack.com', 'media.licdn.com', 'www.dragosroua.com'],
   },
 }
 

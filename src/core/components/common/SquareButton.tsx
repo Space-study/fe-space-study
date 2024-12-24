@@ -2,7 +2,7 @@ import React, {ComponentType, SVGProps} from 'react'
 
 interface SquareButtonProps {
   icon: ComponentType<SVGProps<SVGSVGElement>>
-  label: string
+  label?: string
   onClick: () => void
   className?: string
   color?: string
