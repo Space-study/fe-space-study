@@ -4,6 +4,7 @@ interface SquareButtonProps {
   icon: ComponentType<SVGProps<SVGSVGElement>>
   label?: string
   onClick: () => void
+  children?: React.ReactNode
   className?: string
   color?: string
 }
