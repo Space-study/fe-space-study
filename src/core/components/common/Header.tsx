@@ -1,36 +1,34 @@
+// import {Avatar, AvatarFallback, AvatarImage} from '@src/components/ui/avatar'
+import {Button} from '@src/components/ui/button'
 import Link from 'next/link'
 
 const Header = () => {
+  const navItems = [
+    {href: '/', label: 'Home'},
+    {href: '/meetings', label: 'Meetings'},
+    {href: '/room', label: 'Room'},
+    {href: '/example', label: 'Example Redux'},
+    {href: '/blog', label: 'Blog'},
+    {href: '/contact', label: 'Contact Us'},
+  ]
   return (
-    <header className='bg-white shadow sticky top-0 z-50'>
-      <div className='container mx-auto px-4'>
-        <div className='flex justify-between items-center py-4'>
-          <Link href='/' className='text-2xl font-bold text-gray-800'>
+    <header className='container shadow sticky top-0 z-50 bg-transparent'>
+      <div className='w-screen fixed flex justify-around'>
+        <div className='flex inline-flex justify-between items-center py-4 '>
+          <Link href='/' className='text-2xl font-bold text-gray-800 text-white'>
             Edu Smart
           </Link>
-          <nav>
+        </div>
+        <div className='flex inline-flex justify-between items-center py-4'>
+          <nav className='flex items-center py-4'>
             <ul className='flex space-x-6'>
-              <li>
-                <Link href='/' className='text-gray-700 hover:text-red-500'>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href='/meetings' className='text-gray-700 hover:text-red-500'>
-                  Meetings
-                </Link>
-              </li>
-              <li>
-                <Link href='/room' className='text-gray-700 hover:text-red-500'>
-                  Room
-                </Link>
-              </li>
-              <li>
-                <Link href='/example' className='text-gray-700 hover:text-red-500'>
-                  Example Redux
-                </Link>
-              </li>
-              {/* <li className='relative group'>
+              {navItems.map(item => (
+                <li key={item.href}>
+                  <Link href={item.href} className='text-white hover:text-red-500'>
+                    {item.label}
+                  </Link>
+                </li>
+                /* <li className='relative group'>
                 <span className='text-gray-700 hover:text-red-500 cursor-pointer'>Pages</span>
                 <ul className='absolute hidden group-hover:block bg-white shadow rounded mt-2'>
                   <li>
@@ -44,19 +42,21 @@ const Header = () => {
                     </Link>
                   </li>
                 </ul>
-              </li> */}
-              <li>
-                <Link href='/blog' className='text-gray-700 hover:text-red-500'>
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href='/contact' className='text-gray-700 hover:text-red-500'>
-                  Contact Us
-                </Link>
-              </li>
+              </li> */
+              ))}
             </ul>
           </nav>
+        </div>
+        <div className='flex inline-flex justify-between items-center py-4 rounded-full'>
+          <Button variant='ghost'>Login</Button>
+          {/* <Button variant='ghost'>
+            <Avatar className='w-8 h-8'>
+              <AvatarImage src='https://github.com/shadcn.png' />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <p className='font-sans'>Username</p>
+          </Button>
+          <Button variant='ghost'>Logout</Button> */}
         </div>
       </div>
     </header>
