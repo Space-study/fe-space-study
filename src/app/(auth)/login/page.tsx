@@ -2,6 +2,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { FcGoogle } from 'react-icons/fc'
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
 // import LogoComponent from '@/components/Logo/Logo.component';
 
 const Login = () => {
@@ -72,33 +74,9 @@ const Login = () => {
                                     onClick={handleTogglePasswordVisibility}
                                     className='absolute inset-y-0 right-3 flex items-center text-gray-600'>
                                     {showPassword ? (
-                                        <svg
-                                            xmlns='http://www.w3.org/2000/svg'
-                                            fill='none'
-                                            viewBox='0 0 24 24'
-                                            strokeWidth='1.5'
-                                            stroke='currentColor'
-                                            className='w-6 h-6'>
-                                            <path
-                                                strokeLinecap='round'
-                                                strokeLinejoin='round'
-                                                d='M3.98 8.54a10.477 10.477 0 0116.04 0M12 3c4.97 0 9 3.35 10.52 8a10.477 10.477 0 01-16.04 0A10.477 10.477 0 0112 3zm0 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zm0 1.5a.75.75 0 110 1.5.75.75 0 010-1.5z'
-                                            />
-                                        </svg>
+                                        <FaRegEyeSlash />
                                     ) : (
-                                        <svg
-                                            xmlns='http://www.w3.org/2000/svg'
-                                            fill='none'
-                                            viewBox='0 0 24 24'
-                                            strokeWidth='1.5'
-                                            stroke='currentColor'
-                                            className='w-6 h-6'>
-                                            <path
-                                                strokeLinecap='round'
-                                                strokeLinejoin='round'
-                                                d='M3.98 8.54a10.477 10.477 0 0116.04 0M12 3c4.97 0 9 3.35 10.52 8a10.477 10.477 0 01-16.04 0A10.477 10.477 0 0112 3zm0 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zm0 1.5a.75.75 0 110 1.5.75.75 0 010-1.5z'
-                                            />
-                                        </svg>
+                                        <FaRegEye />
                                     )}
                                 </button>
                             </div>
