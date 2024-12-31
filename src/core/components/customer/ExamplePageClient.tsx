@@ -25,7 +25,6 @@ const ExamplePageClient: React.FC<ExamplePageClientProps> = ({user}) => {
   // Dispatch action to set user if needed (only on the client)
   useEffect(() => {
     if (isClient && !userFromStore.name && !userFromStore.email && user) {
-
       dispatch(setUser({name: user.username, email: user.email}))
     }
   }, [dispatch, user, userFromStore, isClient])
