@@ -1,25 +1,46 @@
-import CustomerCard from '@src/core/components/common/CustomerCard'
+'use client'
 
-const mockCustomers = [
-  {name: 'John Doe', email: 'john.doe@example.com', phone: '123-456-7890'},
-  {name: 'Jane Smith', email: 'jane.smith@example.com', phone: '987-654-3210'},
-  {name: 'Alice Johnson', email: 'alice.johnson@example.com', phone: '456-789-1234'},
-]
+import {userManagementService} from '@src/core/services/admin/user-management.service'
+import {UserResponse} from '@src/core/types/user.type'
+import {useEffect, useRef, useState} from 'react'
+import {columns} from './columns'
+import {DataTable} from './data-table'
+import usePaginate from '@src/core/hooks/usePaginate'
 
-export default async function CustomerPage() {
-  await new Promise(resolve => setTimeout(resolve, 3000))
+export default function UsersPage() {
+
+  const {
+    pagination, 
+  } = usePaginate<UserResponse>();
+  const [isFetching, setIsFetching] = useState<boolean>(false)
+  const [users, setUsers] = useState()
+
+  const handleFetchUsers = useRef<() => Promise<void>>(async () => {
+    setIsFetching(true)
+    try {
+      const response = await userManagementService.getPaginatedUsers(pagination)
+      const usersWithMappedFields = response.map((user: UserResponse) => ({
+        id: user.id,
+        fullName: user.firstName + ' ' + user.lastName,
+        email: user.email,
+        provider: user.provider,
+        status: user.status.name,
+      }))
+      setUsers(usersWithMappedFields)
+      setIsFetching(false)
+    } catch (error) {
+      console.error(error)
+      setIsFetching(false)
+    }
+  })
+
+  useEffect(() => {
+    handleFetchUsers.current()
+  }, [setUsers])
+
   return (
-    <div className='p-6 space-y-4'>
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {mockCustomers.map((customer, index) => (
-          <CustomerCard
-            key={index}
-            name={customer.name}
-            email={customer.email}
-            phone={customer.phone}
-          />
-        ))}
-      </div>
+    <div>
+      <DataTable columns={columns} data={users || []} isLoading={isFetching} />
     </div>
   )
 }

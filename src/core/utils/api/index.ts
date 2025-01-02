@@ -48,7 +48,7 @@ class HttpClient implements IHttpClient {
     if (!HttpClient.instance) {
       // const accessToken = typeof window === "undefined" ? null : localStorage?.getItem("accessToken");
       const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiX19lbnRpdHkiOiJSb2xlRW50aXR5In0sInNlc3Npb25JZCI6MTQsImlhdCI6MTczMzkwMDE3NiwiZXhwIjoxNzMzOTAxOTc2fQ.XG_0h6Dpswx8aiFrvlc3w-wR3aEjQBQ_L1kHTqDr9zA'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiX19lbnRpdHkiOiJSb2xlRW50aXR5In0sInNlc3Npb25JZCI6MjIsImlhdCI6MTczNTgwMDU3MSwiZXhwIjoxNzM1ODAyMzcxfQ.w-8AWldicjkJn97-5tG2MDeK4ivGXcRRvx-AfYr5IrA'
       HttpClient.instance = new HttpClient(
         setupInterceptorsTo(
           axios.create({

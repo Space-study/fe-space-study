@@ -1,4 +1,4 @@
-import { apiPath } from '@src/core/utils/api';
+import { apiPath } from '@src/core/utils/api/api';
 
 export const fetchUsers = async () => {
   try {
