@@ -1,6 +1,17 @@
+'use client'
 import Link from 'next/link'
+import {useRouter} from 'next/navigation'
+import {useCallback} from 'react'
 
 const Header = () => {
+  const router = useRouter()
+
+  // Clears token from local storage and redirects to login
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('accessToken')
+    router.push('/login') // Adjust the path as needed
+  }, [router])
+
   return (
     <header className='bg-white shadow sticky top-0 z-50'>
       <div className='container mx-auto px-4'>
@@ -30,21 +41,6 @@ const Header = () => {
                   Example Redux
                 </Link>
               </li>
-              {/* <li className='relative group'>
-                <span className='text-gray-700 hover:text-red-500 cursor-pointer'>Pages</span>
-                <ul className='absolute hidden group-hover:block bg-white shadow rounded mt-2'>
-                  <li>
-                    <Link href='/meetings' className='block px-4 py-2 hover:bg-gray-100'>
-                      Upcoming Meetings
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href='/meeting-details' className='block px-4 py-2 hover:bg-gray-100'>
-                      Meeting Details
-                    </Link>
-                  </li>
-                </ul>
-              </li> */}
               <li>
                 <Link href='/blog' className='text-gray-700 hover:text-red-500'>
                   Blog
@@ -54,6 +50,12 @@ const Header = () => {
                 <Link href='/contact' className='text-gray-700 hover:text-red-500'>
                   Contact Us
                 </Link>
+              </li>
+              {/* Logout button */}
+              <li>
+                <button onClick={handleLogout} className='text-gray-700 hover:text-red-500'>
+                  Logout
+                </button>
               </li>
             </ul>
           </nav>
