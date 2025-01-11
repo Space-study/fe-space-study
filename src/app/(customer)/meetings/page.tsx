@@ -1,4 +1,4 @@
-import MeetingsPage from '@src/core/pages/customer/MeetPageClient';
+import MeetingsPage from '@src/core/pages/customer/MeetPageClient'
 
 const sampleData = [
   {
@@ -41,8 +41,8 @@ const sampleData = [
     status: 'Online',
     count: 230,
   },
-];
+]
 
 export default function CustomerPage() {
-  return <MeetingsPage data={sampleData} />;
+  return <MeetingsPage data={sampleData} />
 }
