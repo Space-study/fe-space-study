@@ -4,17 +4,55 @@ import React, {useState} from 'react'
 import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa'
 import {FcGoogle} from 'react-icons/fc'
 // import LogoComponent from '@/components/Logo/Logo.component';
+import {useForm} from 'react-hook-form'
+
+type LoginFormInputs = {
+  email: string
+  password: string
+}
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
   const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<LoginFormInputs>()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    router.push('/room')
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/auth/email/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      })
+
+      if (!response.ok) {
+        // Handle error (e.g., show an error message or log error)
+        console.error('Login failed')
+        return
+      }
+
+      // Assuming your NestJS API returns JSON with an access token
+      const result = await response.json()
+      console.log('Login successful. Token:', result?.token)
+
+      // For demonstration only: store the token in localStorage
+      // In production, consider using cookies (HttpOnly, Secure) for added security
+      localStorage.setItem('accessToken', result?.token)
+      console.log('Token stored in localStorage')
+
+      // Redirect user after successful login
+      router.push('/')
+    } catch (error) {
+      console.error('Error calling API:', error)
+    }
   }
 
   const handleTogglePasswordVisibility = () => {
@@ -40,19 +78,19 @@ const Login = () => {
         {/* Middle Section for Form */}
         <div className='w-2/3 bg-white rounded-lg shadow-lg p-8 mt-6'>
           <h1 className='text-3xl font-bold mb-6 text-left text-gray-800'>Sign In</h1>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='email'>
                 Email Address
               </label>
               <input
                 id='email'
-                type='email'
                 className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                type='email'
+                {...register('email', {required: 'Vui lòng nhập Email'})}
                 required
               />
+              {errors.email && <p>{errors.email.message}</p>}
             </div>
 
             <div className='mb-6'>
@@ -64,10 +102,10 @@ const Login = () => {
                   id='password'
                   type={showPassword ? 'text' : 'password'}
                   className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  {...register('password', {required: 'Please enter your password'})}
                   required
                 />
+                {errors.password && <p>{errors.password.message}</p>}
                 <button
                   type='button'
                   onClick={handleTogglePasswordVisibility}
@@ -77,18 +115,18 @@ const Login = () => {
               </div>
             </div>
 
-            <div className='bg-white flex items-center mb-6'>
-              <input
-                type='checkbox'
-                id='remember'
-                checked={rememberMe}
-                onChange={e => setRememberMe(e.target.checked)}
-                className='mr-2 bg-white'
-              />
-              <label htmlFor='remember' className='text-sm text-gray-800'>
-                Remember me
-              </label>
-            </div>
+            {/* <div className='bg-white flex items-center mb-6'>
+                            <input
+                                type='checkbox'
+                                id='remember'
+                                checked={rememberMe}
+                                onChange={e => setRememberMe(e.target.checked)}
+                                className='mr-2 bg-white'
+                            />
+                            <label htmlFor='remember' className='text-sm text-gray-800'>
+                                Remember me
+                            </label>
+                        </div> */}
 
             <button
               type='submit'
