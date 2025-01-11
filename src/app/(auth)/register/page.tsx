@@ -2,47 +2,51 @@
 
 import {useRouter} from 'next/navigation'
 import React, {useState} from 'react'
+import {useForm} from 'react-hook-form'
+
+type RegisterFormInputs = {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+}
 
 const Register = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null)
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setError(null)
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<RegisterFormInputs>()
 
-    // Validation
-    if (!email || !password || !firstName || !lastName) {
-      setError('All fields are required.')
-      return
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.')
-      return
-    }
-
+  const onSubmit = async (data: RegisterFormInputs) => {
     try {
-      // Mock API call
-      const response = await fetch('/api/register', {
+      const response = await fetch('http://localhost:8000/api/v1/auth/email/register', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password, firstName, lastName}),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       })
 
-      if (response.ok) {
-        console.log('Registration successful')
-        router.push('/login')
-      } else {
-        const data = await response.json()
-        setError(data.message || 'Registration failed.')
+      if (!response.ok) {
+        console.log('Registration failed:', response)
       }
+
+      console.log('Registration successful')
+
+      // Redirect to login page
+      router.push('/login')
     } catch (err) {
-      console.error(err)
-      setError('An unexpected error occurred.')
+      if (typeof err === 'string') {
+        setServerError(err) // Handle string errors
+      } else if (err instanceof Error) {
+        setServerError(err.message) // Handle Error objects
+      } else {
+        setServerError('An unknown error occurred.') // Handle other cases
+      }
     }
   }
 
@@ -52,8 +56,8 @@ const Register = () => {
       <div className='flex flex-col justify-center items-center w-full md:w-1/2 p-6'>
         <div className='w-2/3 bg-white rounded-lg shadow-lg p-8 mt-6'>
           <h1 className='text-3xl font-bold mb-6 text-left text-gray-800'>Register</h1>
-          <form onSubmit={handleSubmit}>
-            {error && <div className='mb-4 text-red-500'>{error}</div>}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* First Name */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='firstName'>
                 First Name
@@ -61,12 +65,16 @@ const Register = () => {
               <input
                 id='firstName'
                 type='text'
-                className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                value={firstName}
-                onChange={e => setFirstName(e.target.value)}
-                required
+                className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
+                  errors.firstName ? 'border-red-500' : ''
+                }`}
+                {...register('firstName', {required: 'First Name is required'})}
               />
+              {errors.firstName && (
+                <span className='text-red-500 text-sm'>{errors.firstName.message}</span>
+              )}
             </div>
+            {/* Last Name */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='lastName'>
                 Last Name
@@ -74,12 +82,16 @@ const Register = () => {
               <input
                 id='lastName'
                 type='text'
-                className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                value={lastName}
-                onChange={e => setLastName(e.target.value)}
-                required
+                className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
+                  errors.lastName ? 'border-red-500' : ''
+                }`}
+                {...register('lastName', {required: 'Last Name is required'})}
               />
+              {errors.lastName && (
+                <span className='text-red-500 text-sm'>{errors.lastName.message}</span>
+              )}
             </div>
+            {/* Email */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='email'>
                 Email Address
@@ -87,12 +99,14 @@ const Register = () => {
               <input
                 id='email'
                 type='email'
-                className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
+                className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
+                  errors.email ? 'border-red-500' : ''
+                }`}
+                {...register('email', {required: 'Email is required'})}
               />
+              {errors.email && <span className='text-red-500 text-sm'>{errors.email.message}</span>}
             </div>
+            {/* Password */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='password'>
                 Password
@@ -100,18 +114,27 @@ const Register = () => {
               <input
                 id='password'
                 type='password'
-                className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
+                className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
+                  errors.password ? 'border-red-500' : ''
+                }`}
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {value: 6, message: 'Password must be at least 6 characters long'},
+                })}
               />
+              {errors.password && (
+                <span className='text-red-500 text-sm'>{errors.password.message}</span>
+              )}
             </div>
+            {/* Submit Button */}
             <button
               type='submit'
               className='w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded'>
               Register
             </button>
           </form>
+          {/* Server Error Message */}
+          {serverError && <p className='text-red-500 mt-4 text-center'>{serverError}</p>}
           <div className='mt-6 text-center'>
             <span className='text-gray-500'>Already have an account?</span>
             <a href='/login' className='ml-2 text-blue-500 hover:underline'>
