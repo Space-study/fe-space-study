@@ -68,12 +68,17 @@ const Register = () => {
                 className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
                   errors.firstName ? 'border-red-500' : ''
                 }`}
-                {...register('firstName', {required: 'First Name is required'})}
+                {...register('firstName', {
+                  required: 'First Name is required',
+                  minLength: {value: 2, message: 'First Name must be at least 2 characters'},
+                  pattern: {value: /^[A-Za-z]+$/, message: 'First Name must contain only letters'},
+                })}
               />
               {errors.firstName && (
                 <span className='text-red-500 text-sm'>{errors.firstName.message}</span>
               )}
             </div>
+
             {/* Last Name */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='lastName'>
@@ -85,12 +90,17 @@ const Register = () => {
                 className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
                   errors.lastName ? 'border-red-500' : ''
                 }`}
-                {...register('lastName', {required: 'Last Name is required'})}
+                {...register('lastName', {
+                  required: 'Last Name is required',
+                  minLength: {value: 2, message: 'Last Name must be at least 2 characters'},
+                  pattern: {value: /^[A-Za-z]+$/, message: 'Last Name must contain only letters'},
+                })}
               />
               {errors.lastName && (
                 <span className='text-red-500 text-sm'>{errors.lastName.message}</span>
               )}
             </div>
+
             {/* Email */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='email'>
@@ -102,10 +112,17 @@ const Register = () => {
                 className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white ${
                   errors.email ? 'border-red-500' : ''
                 }`}
-                {...register('email', {required: 'Email is required'})}
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Invalid email format',
+                  },
+                })}
               />
               {errors.email && <span className='text-red-500 text-sm'>{errors.email.message}</span>}
             </div>
+
             {/* Password */}
             <div className='mb-6'>
               <label className='block text-gray-800 text-sm font-bold mb-2' htmlFor='password'>
@@ -120,12 +137,18 @@ const Register = () => {
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {value: 6, message: 'Password must be at least 6 characters long'},
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{6,}$/,
+                    message:
+                      'Password must contain at least one letter, one number, and one special character',
+                  },
                 })}
               />
               {errors.password && (
                 <span className='text-red-500 text-sm'>{errors.password.message}</span>
               )}
             </div>
+
             {/* Submit Button */}
             <button
               type='submit'
@@ -133,6 +156,7 @@ const Register = () => {
               Register
             </button>
           </form>
+
           {/* Server Error Message */}
           {serverError && <p className='text-red-500 mt-4 text-center'>{serverError}</p>}
           <div className='mt-6 text-center'>
