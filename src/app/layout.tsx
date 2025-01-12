@@ -2,6 +2,7 @@
 
 import {store} from '@src/core/redux/store'
 import React from 'react'
+import {Toaster} from 'react-hot-toast'
 import {Provider} from 'react-redux'
 import './globals.css'
 import {ThemeProvider} from './shared/ThemeProvider'
@@ -16,6 +17,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           enableSystem
           disableTransitionOnChange>
           <Provider store={store}>{children}</Provider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
