@@ -87,10 +87,15 @@ const Login = () => {
                 id='email'
                 className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
                 type='email'
-                {...register('email', {required: 'Vui lòng nhập Email'})}
-                required
+                {...register('email', {
+                  required: 'Vui lòng nhập Email',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Email không đúng định dạng',
+                  },
+                })}
               />
-              {errors.email && <p>{errors.email.message}</p>}
+              {errors.email && <p className='text-red-600 text-sm mt-1'>{errors.email.message}</p>}
             </div>
 
             <div className='mb-6'>
@@ -102,10 +107,13 @@ const Login = () => {
                   id='password'
                   type={showPassword ? 'text' : 'password'}
                   className='w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-white'
-                  {...register('password', {required: 'Please enter your password'})}
-                  required
+                  {...register('password', {
+                    required: 'Password is required',
+                  })}
                 />
-                {errors.password && <p>{errors.password.message}</p>}
+                {errors.password && (
+                  <p className='text-red-600 text-sm mt-1'>{errors.password.message}</p>
+                )}
                 <button
                   type='button'
                   onClick={handleTogglePasswordVisibility}
