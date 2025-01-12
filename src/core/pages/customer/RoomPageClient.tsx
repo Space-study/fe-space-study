@@ -2,7 +2,6 @@
 
 import Header from '@/core/components/customer/room/Header'
 import Scenes from '@/core/components/customer/room/Scenes'
-import React, {useEffect, useState} from 'react'
 
 const RoomPageClient: React.FC = () => {
   // const [isMobileView, setIsMobileView] = useState(false)
