@@ -1,8 +1,8 @@
-import nextJest from 'next/jest';
+import nextJest from 'next/jest'
 
 const createJestConfig = nextJest({
   dir: './', // Path to your Next.js app
-});
+})
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // Use .ts file for setup
@@ -14,6 +14,6 @@ const customJestConfig = {
     '^@/core/(.*)$': '<rootDir>/src/core/$1',
     '^@/src/(.*)$': '<rootDir>/src/$1',
   },
-};
+}
 
-export default createJestConfig(customJestConfig);
+export default createJestConfig(customJestConfig)

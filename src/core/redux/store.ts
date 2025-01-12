@@ -1,4 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit'
+import backgroundReducer from './slices/backgroundSlice'
 import blogReducer from './slices/blogSlice'
 import userReducer from './slices/userSlice'
 
@@ -7,6 +8,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     blog: blogReducer,
+    background: backgroundReducer,
   },
 })
 
