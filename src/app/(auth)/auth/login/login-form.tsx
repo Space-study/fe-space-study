@@ -13,6 +13,7 @@ import {useForm} from 'react-hook-form'
 import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa'
 import {FcGoogle} from 'react-icons/fc'
 import {loginSchema, type LoginData} from '../../../../core/utils/validation/auth'
+import authImg1 from '../authImg1.webp'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -23,6 +24,7 @@ export default function LoginForm() {
       email: '',
       password: '',
     },
+    mode: 'onTouched', // Validate on touch
   })
 
   async function onSubmit(data: LoginData) {
@@ -39,7 +41,6 @@ export default function LoginForm() {
       })
 
       if (!response.ok) {
-        console.error('Login failed')
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
         })
@@ -47,16 +48,10 @@ export default function LoginForm() {
       }
 
       const result = await response.json()
-      console.log('Login successful. Token:', result?.token)
-
-      // For demonstration only: store the token in localStorage
       localStorage.setItem('accessToken', result?.token)
-      console.log('Token stored in localStorage')
-
-      // Redirect user after successful login
       router.push('/')
     } catch (error) {
-      console.error('Error calling API:', error)
+      console.error('Error during login:', error)
       form.setError('root', {
         message: 'An error occurred. Please try again.',
       })
@@ -68,9 +63,6 @@ export default function LoginForm() {
   }
 
   const handleGoogleLogin = () => {
-    console.log('Logging in with Google...')
-    // Implement Google login logic here
-    // For now, we'll just redirect to home
     router.push('/')
   }
 
@@ -79,7 +71,7 @@ export default function LoginForm() {
       <div className='flex w-full items-center justify-center lg:w-1/2'>
         <div className='mx-auto w-full max-w-sm space-y-6 px-4'>
           <div className='space-y-2 text-center'>
-            <h1 className='text-2xl font-semibold text-gray-900'>Continue to FocusHub</h1>
+            <h1 className='text-2xl font-semibold text-gray-900 text-left'>Continue to FocusHub</h1>
           </div>
           <Button
             variant='outline'
@@ -102,10 +94,19 @@ export default function LoginForm() {
               <FormField
                 control={form.control}
                 name='email'
-                render={({field}) => (
+                render={({field, fieldState}) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder='Email' type='email' {...field} />
+                      <Input
+                        placeholder='Email'
+                        type='email'
+                        {...field}
+                        className={`${
+                          fieldState.invalid
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-gray-300 focus:ring-indigo-500'
+                        }`}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -114,7 +115,7 @@ export default function LoginForm() {
               <FormField
                 control={form.control}
                 name='password'
-                render={({field}) => (
+                render={({field, fieldState}) => (
                   <FormItem>
                     <FormControl>
                       <div className='relative'>
@@ -122,6 +123,11 @@ export default function LoginForm() {
                           placeholder='Password'
                           type={showPassword ? 'text' : 'password'}
                           {...field}
+                          className={`${
+                            fieldState.invalid
+                              ? 'border-red-500 focus:ring-red-500'
+                              : 'border-gray-300 focus:ring-indigo-500'
+                          }`}
                         />
                         <button
                           type='button'
@@ -164,7 +170,7 @@ export default function LoginForm() {
         <div className='relative h-full w-full bg-[#4F46E5]'>
           <div className='absolute inset-0 flex flex-col items-center justify-center p-8'>
             <Image
-              src='../../../public/images/focus.svg'
+              src={authImg1}
               alt='Focus illustration'
               width={400}
               height={400}

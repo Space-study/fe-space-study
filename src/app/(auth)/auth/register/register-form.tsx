@@ -10,7 +10,7 @@ import Link from 'next/link'
 import {useForm} from 'react-hook-form'
 import {FcGoogle} from 'react-icons/fc'
 import {registerSchema, type RegisterData} from '../../../../core/utils/validation/auth'
-
+import authImg1 from '../authImg1.webp'
 export default function RegisterForm() {
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -20,6 +20,7 @@ export default function RegisterForm() {
       email: '',
       password: '',
     },
+    mode: 'onTouched',
   })
 
   async function onSubmit(data: RegisterData) {
@@ -33,15 +34,16 @@ export default function RegisterForm() {
       })
 
       if (!response.ok) {
-        console.log('Registration failed:', response)
+        const errorData = await response.json() // Parse the error response
+        alert(`Registration failed: ${errorData.message || 'Something went wrong.'}`)
+      } else {
+        alert('Registration successful. Please verify your email to continue.')
       }
 
-      console.log('Registration successful')
-
-      alert('Registration successful. Please verify your email to continue.')
-      form.reset()
+      form.reset() // Reset the form
     } catch (err) {
       console.error('Error during registration:', err)
+      alert('An unexpected error occurred. Please try again later.')
     }
   }
 
@@ -50,7 +52,7 @@ export default function RegisterForm() {
       <div className='flex w-full items-center justify-center lg:w-1/2'>
         <div className='mx-auto w-full max-w-sm space-y-6 px-4'>
           <div className='space-y-2 text-center'>
-            <h1 className='text-2xl font-semibold text-gray-900'>Create your FocusHub account</h1>
+            <h1 className='text-2xl font-semibold text-gray-900 text-left'>Create your FocusHub</h1>
           </div>
           <Button variant='outline' className='w-full justify-center gap-2' type='button'>
             <FcGoogle className='mr-2 size-8' />
@@ -73,7 +75,13 @@ export default function RegisterForm() {
                   render={({field}) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder='First Name' {...field} />
+                        <Input
+                          placeholder='First Name'
+                          className={
+                            form.formState.errors.firstName ? 'border-red-500' : 'border-gray-300'
+                          }
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -85,7 +93,13 @@ export default function RegisterForm() {
                   render={({field}) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder='Last Name' {...field} />
+                        <Input
+                          placeholder='Last Name'
+                          className={
+                            form.formState.errors.lastName ? 'border-red-500' : 'border-gray-300'
+                          }
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -98,7 +112,14 @@ export default function RegisterForm() {
                 render={({field}) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder='Email' type='email' {...field} />
+                      <Input
+                        placeholder='Email'
+                        type='email'
+                        className={
+                          form.formState.errors.email ? 'border-red-500' : 'border-gray-300'
+                        }
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -110,15 +131,19 @@ export default function RegisterForm() {
                 render={({field}) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder='Password' type='password' {...field} />
+                      <Input
+                        placeholder='Password'
+                        type='password'
+                        className={
+                          form.formState.errors.password ? 'border-red-500' : 'border-gray-300'
+                        }
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {form.formState.errors.root && (
-                <div className='text-sm text-red-500'>{form.formState.errors.root.message}</div>
-              )}
               <Button
                 type='submit'
                 className='w-full bg-[#4F46E5] hover:bg-[#4338CA]'
@@ -149,7 +174,7 @@ export default function RegisterForm() {
         <div className='relative h-full w-full bg-[#4F46E5]'>
           <div className='absolute inset-0 flex flex-col items-center justify-center p-8'>
             <Image
-              src='../../../public/illustrations/focus.svg'
+              src={authImg1}
               alt='Focus illustration'
               width={400}
               height={400}
