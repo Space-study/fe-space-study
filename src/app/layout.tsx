@@ -12,8 +12,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang='en'>
       <body className='flex flex-col min-h-screen'>
         <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
+          // attribute='class'
+          // defaultTheme='system'
           enableSystem
           disableTransitionOnChange>
           <Provider store={store}>{children}</Provider>
