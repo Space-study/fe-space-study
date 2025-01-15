@@ -154,7 +154,7 @@ export default function LoginForm() {
           </Form>
 
           <div className='text-center text-sm'>
-            <Link href='/forgot-password/forgot' className='text-[#4F46E5] hover:underline'>
+            <Link href='/forgot-password/confirm' className='text-[#4F46E5] hover:underline'>
               Forgot password?
             </Link>
           </div>

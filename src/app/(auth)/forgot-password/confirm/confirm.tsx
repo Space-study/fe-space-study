@@ -10,6 +10,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {useForm} from 'react-hook-form'
 import authImg1 from '../../auth/authImg1.webp'
+
 export default function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -21,7 +22,7 @@ export default function ForgotPasswordForm() {
 
   async function onSubmit(data: ForgotPasswordData) {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/email/register', {
+      const response = await fetch('http://localhost:8000/api/v1/auth/forgot/password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
