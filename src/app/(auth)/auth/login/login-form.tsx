@@ -1,5 +1,6 @@
 'use client'
 
+import {loginSchema, type LoginData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
@@ -12,7 +13,6 @@ import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa'
 import {FcGoogle} from 'react-icons/fc'
-import {loginSchema, type LoginData} from '../../../../core/utils/validation/auth'
 import authImg1 from '../authImg1.webp'
 
 export default function LoginForm() {
@@ -154,7 +154,7 @@ export default function LoginForm() {
           </Form>
 
           <div className='text-center text-sm'>
-            <Link href='/forgot-password' className='text-[#4F46E5] hover:underline'>
+            <Link href='/forgot-password/forgot' className='text-[#4F46E5] hover:underline'>
               Forgot password?
             </Link>
           </div>
