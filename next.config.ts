@@ -33,7 +33,23 @@ const nextConfig: NextConfig = {
   },
   //add domain src get imgage here
   images: {
-    domains: ['museumhack.com', 'media.licdn.com', 'www.dragosroua.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'museumhack.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.dragosroua.com',
+        pathname: '/**',
+      },
+    ],
   },
 }
 
