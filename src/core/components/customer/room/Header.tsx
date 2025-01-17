@@ -10,7 +10,7 @@ import SoundModal from '@/core/components/customer/room/tools/Sound/SoundModal'
 import Time from '@/core/components/customer/room/tools/Time'
 import TodoListContent from '@/core/components/customer/room/tools/TodoList/TodoListContent'
 // import YoutubeModal from '../YouTube/YoutubeModal';
-
+import SwitchMenuButton from '@/core/components/customer/room/tools/Plan'
 const Header: React.FC = () => {
   return (
     <div className='px-9 flex items-center justify-between'>
@@ -20,6 +20,7 @@ const Header: React.FC = () => {
       {/* Right section with multiple controls */}
       <div className='flex items-center justify-end gap-4'>
         <Expand />
+        <SwitchMenuButton />
         <BackgroundButton />
         {/*<Menus> 
           <MusicButton />
