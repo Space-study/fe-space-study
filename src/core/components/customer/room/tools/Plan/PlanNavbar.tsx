@@ -1,3 +1,4 @@
+import {useModal} from '@/core/components/customer/room/Modal'
 import {
   CalendarDays,
   ChevronLeft,
@@ -7,6 +8,7 @@ import {
   FolderKanban,
   Layout,
   Maximize2,
+  Minus,
   Pencil,
   Users,
 } from 'lucide-react'
@@ -23,6 +25,7 @@ interface PlanNavbarProps {
 }
 
 const PlanNavbar: React.FC<PlanNavbarProps> = ({className = ''}) => {
+  const {close} = useModal()
   const navItems: NavItem[] = [
     {name: 'Board', icon: <Layout className='w-4 h-4' />, isActive: true},
     {name: 'Calendar', icon: <CalendarDays className='w-4 h-4' />, isActive: false},
@@ -109,6 +112,12 @@ const PlanNavbar: React.FC<PlanNavbarProps> = ({className = ''}) => {
             </div>
           </div>
         </div>
+        <button
+          type='button'
+          onClick={close}
+          className='px-3 py-1.5 text-sm bg-white border border-gray-300 rounded hover:bg-gray-200 transition duration-200 ease-in-out'>
+          <Minus className='w-4 h-4' />
+        </button>
       </nav>
     </div>
   )

@@ -21,10 +21,11 @@ interface BoardColumnProps {
 export const BoardColumn: React.FC<BoardColumnProps> = memo(
   ({column, onAddTask, onMoveTask, onEditColumn, onDeleteColumn}) => {
     const {isOver, drop} = useColumnDrop(column.id, onMoveTask)
-    console.log('drop', drop)
+
     return (
       <div
-        // ref={drop}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ref={drop as any}
         className={`w-72 bg-gray-100 rounded-lg p-3 flex flex-col ${isOver ? 'bg-gray-200' : ''}`}>
         <div className='flex items-center justify-between mb-3'>
           <div className='flex items-center space-x-2'>
