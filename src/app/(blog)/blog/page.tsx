@@ -7,36 +7,42 @@ const blogPosts = [
     category: 'Stress & Anxiety',
     author: 'Angela Loy',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'stress-and-anxiety',
   },
   {
     title: "Why Self-Doubt Means You're on the Right Path: A Guide to Imposter Syndrome",
     category: 'Personal Growth',
     author: 'Emma Loft',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'self-doubt-right-path',
   },
   {
     title: 'From Burnout to Brilliance: How to Rekindle Your Passion for Your Work',
     category: 'Personal Growth',
     author: 'Angela Loy',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'burnout-to-brilliance',
   },
   {
     title: 'The Case for Doing Nothing: Why Embracing Downtime is Essential for Mental Health',
     category: 'Personal Growth',
     author: 'Angela Loy',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'case-for-doing-nothing',
   },
   {
     title: 'Batching vs. Multitasking: Which is Best for You?',
     category: 'Productivity',
     author: 'Nadia Lemay',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'batching-vs-multitasking',
   },
   {
     title: 'How to Use the Pomodoro Technique Effectively',
     category: 'Productivity',
     author: 'Nadia Lemay',
     imageUrl: '/placeholder.svg?height=400&width=600',
+    slug: 'pomodoro-technique',
   },
 ]
 
@@ -59,6 +65,7 @@ export default function Page() {
               category={post.category}
               author={post.author}
               imageUrl={post.imageUrl}
+              slug={post.slug}
             />
           ))}
         </div>

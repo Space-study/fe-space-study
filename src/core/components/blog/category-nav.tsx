@@ -11,7 +11,7 @@ export function CategoryNav() {
   ]
 
   return (
-    <nav className='overflow-x-auto'>
+    <nav className='overflow-x-auto flex justify-center'>
       <ul className='flex space-x-6 px-4 py-2 min-w-max'>
         {categories.map(category => (
           <li key={category}>
