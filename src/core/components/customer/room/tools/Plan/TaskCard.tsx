@@ -10,10 +10,11 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = memo(({task, columnId, index}) => {
   const {isDragging, drag} = useTaskDrag(task, columnId, index)
-  console.log('drag', drag)
+
   return (
     <div
-      // ref={drag}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ref={drag as any}
       className={`p-3 bg-white rounded-lg shadow mb-2 cursor-move ${
         isDragging ? 'opacity-50' : ''
       } hover:shadow-md transition-shadow duration-200`}>
