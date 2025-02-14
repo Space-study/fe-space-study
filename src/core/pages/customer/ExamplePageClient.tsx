@@ -11,9 +11,10 @@ interface ExamplePageClientProps {
 const ExamplePageClient: React.FC<ExamplePageClientProps> = ({user}) => {
   const dispatch = useAppDispatch()
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   // Get user from the Redux store, including the new `isAuthenticated` state
   const userFromStore = useAppSelector(state => state.user)
-
   // Local state to track if we are in the client-side
   const [isClient, setIsClient] = useState(false)
 
