@@ -8,6 +8,7 @@ import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
 import Image from 'next/image'
 import Link from 'next/link'
+import {useEffect} from 'react'
 import {useForm} from 'react-hook-form'
 import {FcGoogle} from 'react-icons/fc'
 import authImg1 from '../authImg1.webp'
@@ -47,6 +48,20 @@ export default function RegisterForm() {
     }
   }
 
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:8000/api/v1/auth/google/login'
+  }
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+
+    if (token) {
+      document.cookie = `authToken=${token}; path=/;`
+      window.location.href = 'http://localhost:3000/room'
+    }
+  }, [])
+
   return (
     <div className='flex min-h-screen'>
       <div className='flex w-full items-center justify-center lg:w-1/2'>
@@ -54,7 +69,11 @@ export default function RegisterForm() {
           <div className='space-y-2 text-center'>
             <h1 className='text-2xl font-semibold text-gray-900 text-left'>Create your FocusHub</h1>
           </div>
-          <Button variant='outline' className='w-full justify-center gap-2' type='button'>
+          <Button
+            variant='outline'
+            className='w-full justify-center gap-2'
+            type='button'
+            onClick={handleGoogleLogin}>
             <FcGoogle className='mr-2 size-8' />
             Sign up with Google
           </Button>

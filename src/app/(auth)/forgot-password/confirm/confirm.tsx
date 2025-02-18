@@ -34,7 +34,7 @@ export default function ForgotPasswordForm() {
         const errorData = await response.json() // Parse the error response
         alert(`Registration failed: ${errorData.message || 'Something went wrong.'}`)
       } else {
-        alert('Registration successful. Please verify your email to continue.')
+        alert('Please verify your email to reset password')
       }
 
       form.reset() // Reset the form

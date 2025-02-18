@@ -9,7 +9,7 @@ import {Separator} from '@src/core/components/ui/separator'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa'
 import {FcGoogle} from 'react-icons/fc'
@@ -48,7 +48,7 @@ export default function LoginForm() {
       }
 
       const result = await response.json()
-      localStorage.setItem('accessToken', result?.token)
+      document.cookie = `authToken=${result?.token}; path=/;`
       router.push('/')
     } catch (error) {
       console.error('Error during login:', error)
@@ -63,8 +63,18 @@ export default function LoginForm() {
   }
 
   const handleGoogleLogin = () => {
-    router.push('/')
+    window.location.href = 'http://localhost:8000/api/v1/auth/google/login'
   }
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+
+    if (token) {
+      document.cookie = `authToken=${token}; path=/;`
+      window.location.href = 'http://localhost:3000/room'
+    }
+  }, [])
 
   return (
     <div className='flex min-h-screen '>
