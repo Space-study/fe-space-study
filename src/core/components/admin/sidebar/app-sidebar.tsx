@@ -3,9 +3,9 @@
 import {
   BookOpenCheck,
   Dock,
+  EllipsisVertical,
   Landmark,
   ScanEye,
-  Settings2,
   SquareTerminal,
   UserRoundPen,
 } from 'lucide-react'
@@ -35,11 +35,10 @@ const data = {
       title: 'DashBoard',
       url: '#',
       icon: SquareTerminal,
-      isActive: true,
       items: [
         {
           title: 'Statics',
-          url: '#',
+          url: 'dashboard',
         },
       ],
     },
@@ -50,7 +49,7 @@ const data = {
       items: [
         {
           title: 'List',
-          url: '#',
+          url: 'user',
         },
       ],
     },
@@ -124,25 +123,17 @@ const data = {
       ],
     },
     {
-      title: 'Settings',
+      title: 'Others',
       url: '#',
-      icon: Settings2,
+      icon: EllipsisVertical,
       items: [
         {
-          title: 'General',
-          url: '#',
+          title: 'Setting',
+          url: 'setting',
         },
         {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
+          title: 'Chat',
+          url: 'chat',
         },
       ],
     },

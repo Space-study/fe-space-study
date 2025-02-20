@@ -7,20 +7,34 @@ interface StaticData {
   value: number
 }
 
-const data: StaticData = {
-  title: 'Statics',
-  value: 10,
-}
+const statsData: StaticData[] = [
+  {title: 'Total Users', value: 5},
+  {title: 'Active Learning Spaces', value: 125},
+  {title: 'Revenue', value: 25000},
+  {title: 'Engagement Rate', value: 75},
+]
 
-export default function StaticsCard(props: React.HTMLAttributes<HTMLDivElement>) {
+const StatsCard = (props: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Card className='w-full h-full flex flex-col items-center justify-between p-4' {...props}>
-      <CardHeader className='p-0 '>
-        <CardTitle className='text-sm  font-medium'>{data.title}</CardTitle>
-      </CardHeader>
-      <CardContent className='p-0'>
-        <span className='text-3xl font-bold'>{data.value}</span>
-      </CardContent>
-    </Card>
+    <div className='grid grid-cols-1 md:grid-cols-4 gap-4' {...props}>
+      {statsData.map((stat, index) => (
+        <Card key={index} className='flex flex-col items-center justify-center p-4'>
+          <CardHeader className='p-0 '>
+            <CardTitle className='text-sm font-medium text-center'>{stat.title}</CardTitle>
+          </CardHeader>
+          <CardContent className='p-0'>
+            <span className='text-3xl font-bold'>
+              {stat.title === 'Revenue'
+                ? `$${stat.value.toLocaleString()}`
+                : stat.title === 'Engagement Rate'
+                  ? `${stat.value}%`
+                  : stat.value.toLocaleString()}
+            </span>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   )
 }
+
+export default StatsCard
