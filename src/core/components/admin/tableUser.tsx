@@ -1,18 +1,11 @@
 'use client'
 
-import {MoreHorizontal} from 'lucide-react'
+import {RefreshCw, Search} from 'lucide-react' // Import icons
+import {useRouter} from 'next/navigation' // Import useRouter
 import * as React from 'react'
 
 import {Button} from '@src/core/components/ui/button'
 import {Checkbox} from '@src/core/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@src/core/components/ui/dropdown-menu'
 import {Input} from '@src/core/components/ui/input'
 import {
   Table,
@@ -58,20 +51,44 @@ const data = [
 
 export default function DataTable() {
   const [searchTerm, setSearchTerm] = React.useState('')
+  const [isReloading, setIsReloading] = React.useState(false)
+  const router = useRouter() // Initialize useRouter
 
   const filteredData = data.filter(item =>
     item.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  // Simulate a reload action
+  const handleReload = () => {
+    setIsReloading(true)
+    setTimeout(() => {
+      setIsReloading(false)
+    }, 1000) // Simulate a 1-second delay
+  }
+
+  // Navigate to the detail page
+  const handleRowClick = () => {
+    router.push(`/detail`) // Navigate to the detail page with the row ID
+    // ${id}
+  }
+
   return (
     <div className='w-full'>
-      <div className='flex items-center py-4'>
-        <Input
-          placeholder='Filter emails...'
-          value={searchTerm}
-          onChange={event => setSearchTerm(event.target.value)}
-          className='max-w-sm'
-        />
+      <div className='flex items-center justify-between py-4'>
+        <div className='relative flex items-center'>
+          <Search className='absolute left-2 h-4 w-4 text-muted-foreground' /> {/* Search icon */}
+          <Input
+            placeholder='Filter emails...'
+            value={searchTerm}
+            onChange={event => setSearchTerm(event.target.value)}
+            className='max-w-sm pl-8' // Add padding for the icon
+          />
+        </div>
+        <Button variant='outline' onClick={handleReload} disabled={isReloading}>
+          <RefreshCw className={`mr-2 h-4 w-4 ${isReloading ? 'animate-spin' : ''}`} />{' '}
+          {/* Reload icon with spin animation */}
+          {isReloading ? 'Reloading...' : 'Reload'}
+        </Button>
       </div>
       <div className='rounded-md border'>
         <Table>
@@ -81,14 +98,17 @@ export default function DataTable() {
               <TableHead>Status</TableHead>
               <TableHead>Email</TableHead>
               <TableHead className='text-right'>Amount</TableHead>
-              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredData.length ? (
               filteredData.map(row => (
-                <TableRow key={row.id}>
-                  <TableCell>
+                <TableRow
+                  key={row.id}
+                  onClick={() => handleRowClick()} // Make the entire row clickable
+                  className='cursor-pointer hover:bg-gray-50' // Add hover effect
+                >
+                  <TableCell onClick={e => e.stopPropagation()}>
                     <Checkbox aria-label='Select row' />
                   </TableCell>
                   <TableCell>
@@ -102,25 +122,6 @@ export default function DataTable() {
                       style: 'currency',
                       currency: 'USD',
                     }).format(row.amount)}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant='ghost' className='h-8 w-8 p-0'>
-                          <span className='sr-only'>Open menu</span>
-                          <MoreHorizontal />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.id)}>
-                          Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
