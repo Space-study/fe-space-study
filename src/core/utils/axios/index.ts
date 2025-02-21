@@ -10,6 +10,7 @@ import {ErrorMessages} from '@/core/utils/exception/error-messages'
 import axios, {AxiosInstance, AxiosRequestConfig, isAxiosError} from 'axios'
 import {isSafeParseError} from '../validation'
 import {setupInterceptorsTo} from './interceptors'
+
 interface IHttpClient {
   get<T>(props: GetRequestProps): Promise<ApiSuccessResponse<T>>
   post<T, U>(props: PostRequestProps<U>): Promise<ApiSuccessResponse<T>>
@@ -17,6 +18,7 @@ interface IHttpClient {
   patch<T, U>(props: PatchRequestProps<U>): Promise<ApiSuccessResponse<T>>
   delete<T>(props: GetRequestProps): Promise<ApiSuccessResponse<T>>
 }
+
 type ApiRequestProps<U> =
   | {
       method: 'get'
@@ -41,14 +43,17 @@ type ApiRequestProps<U> =
 class HttpClient implements IHttpClient {
   private static instance: HttpClient
   private axiosInstance: AxiosInstance
+
   private constructor(axiosInstance: AxiosInstance) {
     this.axiosInstance = axiosInstance
   }
+
   public static getInstance(): HttpClient {
     if (!HttpClient.instance) {
       // const accessToken = typeof window === "undefined" ? null : localStorage?.getItem("accessToken");
       const accessToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiX19lbnRpdHkiOiJSb2xlRW50aXR5In0sInNlc3Npb25JZCI6MTQsImlhdCI6MTczMzkwMDE3NiwiZXhwIjoxNzMzOTAxOTc2fQ.XG_0h6Dpswx8aiFrvlc3w-wR3aEjQBQ_L1kHTqDr9zA'
+
       HttpClient.instance = new HttpClient(
         setupInterceptorsTo(
           axios.create({
@@ -62,11 +67,14 @@ class HttpClient implements IHttpClient {
         ),
       )
     }
+
     return HttpClient.instance
   }
+
   public get instance(): AxiosInstance {
     return this.axiosInstance
   }
+
   private extractErrorMessages(error: unknown) {
     if (Array.isArray(error) && error.length > 0) {
       /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -74,6 +82,7 @@ class HttpClient implements IHttpClient {
     }
     return 'Unknown error'
   }
+
   private handleError(error: unknown) {
     if (isAxiosError(error)) {
       const errorData = error.response?.data
@@ -81,23 +90,29 @@ class HttpClient implements IHttpClient {
         typeof errorData.error === 'string'
           ? ErrorMessages.get(errorData.error) || errorData.error
           : this.extractErrorMessages(errorData.error)
+
       return errorMessage || 'Network error!'
     }
     return 'Network error!'
   }
+
   private async request<T, U>(params: ApiRequestProps<U>): Promise<ApiSuccessResponse<T>> {
     return new Promise(async (resolve, reject) => {
       try {
         const {method, options} = params
+
         const requestConfig: AxiosRequestConfig = {
           ...(options?.config || {}),
         }
+
         const response = await this.instance[method]<ApiSuccessResponse<T>>(
           options.url,
           method === 'get' || method === 'delete' ? requestConfig : options.body,
           requestConfig,
         )
+
         const result = response.data
+
         if (options?.typeCheck) {
           const isValid = options.typeCheck(result?.payload)
           if (isSafeParseError(isValid)) {
@@ -110,6 +125,7 @@ class HttpClient implements IHttpClient {
       }
     })
   }
+
   public get<T>(props: GetRequestProps): Promise<ApiSuccessResponse<T>> {
     return this.request<T, unknown>({method: 'get', options: props})
   }
@@ -126,4 +142,5 @@ class HttpClient implements IHttpClient {
     return this.request<T, unknown>({method: 'delete', options: props})
   }
 }
+
 export const httpClient = HttpClient.getInstance()
