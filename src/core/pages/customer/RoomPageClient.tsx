@@ -2,6 +2,7 @@
 
 import Header from '@/core/components/customer/room/Header'
 import Scenes from '@/core/components/customer/room/Scenes'
+import {ChatWidget} from '@/core/components/customer/room/tools/chat/chat-widget'
 import React from 'react'
 
 const RoomPageClient: React.FC = () => {
@@ -61,6 +62,7 @@ const RoomPageClient: React.FC = () => {
 
       {/* Main Room Content */}
       <Scenes />
+      <ChatWidget />
       <Header />
       {/* {isStarted && (
         <>
