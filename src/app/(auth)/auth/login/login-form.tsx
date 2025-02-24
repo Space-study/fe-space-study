@@ -6,6 +6,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
+import {apiPath} from '@src/core/utils/api'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
@@ -29,7 +30,7 @@ export default function LoginForm() {
 
   async function onSubmit(data: LoginData) {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/email/login', {
+      const response = await fetch(apiPath('api/v1/auth/email/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +49,9 @@ export default function LoginForm() {
       }
 
       const result = await response.json()
-      document.cookie = `authToken=${result?.token}; path=/;`
+      console.log('result', result)
+      localStorage.setItem('authToken', result?.token)
+      document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
       router.push('/')
     } catch (error) {
       console.error('Error during login:', error)
@@ -69,9 +72,10 @@ export default function LoginForm() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
-
+    console.log('token', token)
     if (token) {
-      document.cookie = `authToken=${token}; path=/;`
+      document.cookie = `refreshToken=${token}; path=/;`
+      localStorage.setItem('authToken', token)
       window.location.href = 'http://localhost:3000/room'
     }
   }, [])
