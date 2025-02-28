@@ -14,6 +14,7 @@ const OutRoom: React.FC = () => {
   const handleOutRoom = () => {
     const confirmLeave = window.confirm('Are you sure you want to leave the room?')
     if (confirmLeave) {
+      localStorage.removeItem('authToken')
       router.push('/')
     }
   }
