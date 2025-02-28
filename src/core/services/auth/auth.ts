@@ -1,7 +1,6 @@
-import { apiPath } from '@src/core/utils/api'
-import { LoginData } from '@src/core/utils/validation/auth'
+import {apiPath} from '@src/core/utils/api'
+import {LoginData} from '@src/core/utils/validation/auth'
 import axios from 'axios'
-
 
 export const login = async (payload: LoginData) => {
   // Build the login URL using RequestBuilder. Adjust the path if needed.
@@ -10,7 +9,7 @@ export const login = async (payload: LoginData) => {
   console.log(loginUrl)
 
   try {
-    const response = await axios.post(loginUrl, { payload })
+    const response = await axios.post(loginUrl, {payload})
     return response
   } catch (error) {
     console.error('Login error:', error)
