@@ -1,5 +1,6 @@
 'use client'
 
+import {AuthProvider} from '@src/core/contexts/AuthContext'
 import {store} from '@src/core/redux/store'
 import {useAuth} from '@src/hooks/useAuth'
 import React from 'react'
@@ -13,14 +14,16 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang='en'>
       <body className='flex flex-col min-h-screen'>
-        <ThemeProvider
-          // attribute='class'
-          // defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange>
-          <Provider store={store}>{children}</Provider>
-          <Toaster />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            // attribute='class'
+            // defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange>
+            <Provider store={store}>{children}</Provider>
+            <Toaster />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   )

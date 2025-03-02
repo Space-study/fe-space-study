@@ -61,7 +61,7 @@ class HttpClient implements IHttpClient {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${accessToken || ''}`,
             },
-            baseURL: process.env.NEXT_PUBLIC_URL_API,
+            baseURL: process.env.NEXT_PUBLIC_API_URL,
             withCredentials: true,
           }),
         ),
