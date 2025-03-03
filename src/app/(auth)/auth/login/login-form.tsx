@@ -6,7 +6,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
-import {apiPath} from '@src/core/utils/api'
+import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
@@ -30,28 +30,16 @@ export default function LoginForm() {
 
   async function onSubmit(data: LoginData) {
     try {
-      const response = await fetch(apiPath('api/v1/auth/email/login'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      })
-
-      if (!response.ok) {
+      const response = await axiosInstance.post('api/v1/auth/email/login', data)
+      console.log('response', response)
+      if (response.status !== 200) {
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
         })
         return
       }
-
-      const result = await response.json()
-      console.log('result', result)
-      localStorage.setItem('authToken', result?.token)
-      document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
+      localStorage.setItem('authToken', response.data.token)
+      document.cookie = `refreshToken=${response.data.refreshToken}; path=/;`
       router.push('/')
     } catch (error) {
       console.error('Error during login:', error)

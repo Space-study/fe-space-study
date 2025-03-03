@@ -10,6 +10,7 @@ import {ThemeProvider} from './shared/ThemeProvider'
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   useAuth()
+
   return (
     <html lang='en'>
       <body className='flex flex-col min-h-screen'>

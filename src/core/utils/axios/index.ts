@@ -50,9 +50,9 @@ class HttpClient implements IHttpClient {
 
   public static getInstance(): HttpClient {
     if (!HttpClient.instance) {
-      // const accessToken = typeof window === "undefined" ? null : localStorage?.getItem("accessToken");
-      const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiX19lbnRpdHkiOiJSb2xlRW50aXR5In0sInNlc3Npb25JZCI6MTQsImlhdCI6MTczMzkwMDE3NiwiZXhwIjoxNzMzOTAxOTc2fQ.XG_0h6Dpswx8aiFrvlc3w-wR3aEjQBQ_L1kHTqDr9zA'
+      const accessToken = typeof window === 'undefined' ? null : localStorage?.getItem('authToken')
+      // const accessToken =
+      //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiX19lbnRpdHkiOiJSb2xlRW50aXR5In0sInNlc3Npb25JZCI6MTQsImlhdCI6MTczMzkwMDE3NiwiZXhwIjoxNzMzOTAxOTc2fQ.XG_0h6Dpswx8aiFrvlc3w-wR3aEjQBQ_L1kHTqDr9zA'
 
       HttpClient.instance = new HttpClient(
         setupInterceptorsTo(
