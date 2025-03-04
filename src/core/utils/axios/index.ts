@@ -6,10 +6,10 @@ import {
   PostRequestProps,
   PutRequestProps,
 } from '@/core/types/api.type'
-import {ErrorMessages} from '@/core/utils/exception/error-messages'
-import axios, {AxiosInstance, AxiosRequestConfig, isAxiosError} from 'axios'
-import {isSafeParseError} from '../validation'
-import {setupInterceptorsTo} from './interceptors'
+import { ErrorMessages } from '@/core/utils/exception/error-messages'
+import axios, { AxiosInstance, AxiosRequestConfig, isAxiosError } from 'axios'
+import { isSafeParseError } from '../validation'
+import { setupInterceptorsTo } from './interceptors'
 
 interface IHttpClient {
   get<T>(props: GetRequestProps): Promise<ApiSuccessResponse<T>>
@@ -21,25 +21,25 @@ interface IHttpClient {
 
 type ApiRequestProps<U> =
   | {
-      method: 'get'
-      options: GetRequestProps
-    }
+    method: 'get'
+    options: GetRequestProps
+  }
   | {
-      method: 'post'
-      options: PostRequestProps<U>
-    }
+    method: 'post'
+    options: PostRequestProps<U>
+  }
   | {
-      method: 'put'
-      options: PutRequestProps<U>
-    }
+    method: 'put'
+    options: PutRequestProps<U>
+  }
   | {
-      method: 'patch'
-      options: PatchRequestProps<U>
-    }
+    method: 'patch'
+    options: PatchRequestProps<U>
+  }
   | {
-      method: 'delete'
-      options: DeleteRequestProps
-    }
+    method: 'delete'
+    options: DeleteRequestProps
+  }
 class HttpClient implements IHttpClient {
   private static instance: HttpClient
   private axiosInstance: AxiosInstance
@@ -99,7 +99,7 @@ class HttpClient implements IHttpClient {
   private async request<T, U>(params: ApiRequestProps<U>): Promise<ApiSuccessResponse<T>> {
     return new Promise(async (resolve, reject) => {
       try {
-        const {method, options} = params
+        const { method, options } = params
 
         const requestConfig: AxiosRequestConfig = {
           ...(options?.config || {}),
@@ -114,7 +114,8 @@ class HttpClient implements IHttpClient {
         const result = response.data
 
         if (options?.typeCheck) {
-          const isValid = options.typeCheck(result?.payload)
+          // const isValid = options.typeCheck(result?.payload)
+          const isValid = options.typeCheck(result)
           if (isSafeParseError(isValid)) {
             throw new Error(isValid?.error?.issues.map(issue => issue.message).join('\n'))
           }
@@ -127,19 +128,19 @@ class HttpClient implements IHttpClient {
   }
 
   public get<T>(props: GetRequestProps): Promise<ApiSuccessResponse<T>> {
-    return this.request<T, unknown>({method: 'get', options: props})
+    return this.request<T, unknown>({ method: 'get', options: props })
   }
   public post<T, U>(props: PostRequestProps<U>): Promise<ApiSuccessResponse<T>> {
-    return this.request<T, U>({method: 'post', options: props})
+    return this.request<T, U>({ method: 'post', options: props })
   }
   public put<T, U>(props: PutRequestProps<U>): Promise<ApiSuccessResponse<T>> {
-    return this.request<T, U>({method: 'put', options: props})
+    return this.request<T, U>({ method: 'put', options: props })
   }
   public patch<T, U>(props: PatchRequestProps<U>): Promise<ApiSuccessResponse<T>> {
-    return this.request<T, U>({method: 'patch', options: props})
+    return this.request<T, U>({ method: 'patch', options: props })
   }
   public delete<T>(props: DeleteRequestProps): Promise<ApiSuccessResponse<T>> {
-    return this.request<T, unknown>({method: 'delete', options: props})
+    return this.request<T, unknown>({ method: 'delete', options: props })
   }
 }
 
