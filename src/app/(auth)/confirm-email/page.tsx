@@ -1,5 +1,6 @@
 'use client'
 
+import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import {useRouter, useSearchParams} from 'next/navigation'
 import {Suspense, useEffect, useState} from 'react'
 
@@ -19,15 +20,9 @@ const ConfirmEmailComponent = () => {
 
   const verifyEmailToken = async (hash: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/auth/email/confirm`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({hash}),
-      })
+      const response = await axiosInstance.post('api/v1/auth/email/confirm', {hash})
 
-      if (response.ok) {
+      if (response) {
         setStatus('success')
       } else {
         setStatus('error')

@@ -9,9 +9,11 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AdaptAxiosRequestConfig = AxiosRequestConfig & InternalAxiosRequestConfig<any>
 export const onRequest = (config: AdaptAxiosRequestConfig): AdaptAxiosRequestConfig => {
-  const accessToken = typeof window === 'undefined' ? null : localStorage?.getItem('accessToken')
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken || ''}`
+  const accessToken = typeof window === 'undefined' ? null : localStorage?.getItem('authToken')
+  if (config.url?.includes('/auth/login')) {
+    delete config.headers.Authorization // Xóa header nếu có
+  } else if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`
   }
   const element = document.getElementById('block-screen')
   if (element && element?.style?.display) {
