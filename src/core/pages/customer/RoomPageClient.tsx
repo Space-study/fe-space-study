@@ -1,58 +1,82 @@
 'use client'
 
-import {Menu} from '@/core/components/customer/MenuControlTool'
-import {OtherControl} from '@/core/components/customer/OtherControl'
-import {Chat} from '@/core/components/customer/tools/Chat'
-import {Music} from '@/core/components/customer/tools/Music'
-import {Spaces} from '@/core/components/customer/tools/Spaces'
-import {Tasks} from '@/core/components/customer/tools/Tasks'
-import {Timer} from '@/core/components/customer/tools/Timer'
-import {ControlChat} from '@src/core/components/customer/ControlChatTool'
-import React, {ReactNode, useState} from 'react'
+import Header from '@/core/components/customer/room/Header'
+import Scenes from '@/core/components/customer/room/Scenes'
+import {ChatWidget} from '@/core/components/customer/room/tools/chat/chat-widget'
+import React from 'react'
 
-interface RoomProps {
-  children: ReactNode
-}
+const RoomPageClient: React.FC = () => {
+  // const [isMobileView, setIsMobileView] = useState(false)
+  // const [isStarted, setIsStarted] = useState(false)
+  // const [isAnimating, setIsAnimating] = useState(false)
 
-interface ActiveTools {
-  spaces: boolean
-  timer: boolean
-  music: boolean
-  tasks: boolean
-  chat: boolean
-}
+  // const handleStart = () => {
+  //   setIsAnimating(true)
+  //   setTimeout(() => {
+  //     setIsStarted(true)
+  //   }, 300)
+  // }
 
-const RoomPageClient = ({children}: RoomProps) => {
-  const [activeTools, setActiveTools] = useState<ActiveTools>({
-    spaces: false,
-    timer: false,
-    music: false,
-    tasks: false,
-    chat: false,
-  })
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobileView(window.innerWidth <= 768)
+  //   }
 
-  const handleToolChange = (name: string) => {
-    setActiveTools(prev => ({
-      ...prev,
-      [name as keyof ActiveTools]: !prev[name as keyof ActiveTools],
-    }))
-  }
+  //   // const handleKeyDown = (e: KeyboardEvent) => {
+  //   //   if (e.key === 'Enter') {
+  //   //     handleStart()
+  //   //   }
+  //   // }
+
+  //   handleResize()
+  //   window.addEventListener('resize', handleResize)
+  //   // window.addEventListener('keydown', handleKeyDown)
+
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize)
+  //     // window.removeEventListener('keydown', handleKeyDown)
+  //   }
+  // }, [])
 
   return (
-    <div className='relative flex flex-col h-screen w-screen overflow-hidden bg-zinc-50  dark:bg-gray-900 dark:text-white'>
-      <OtherControl />
-      <Menu setTool={handleToolChange} />
-      <ControlChat setTool={handleToolChange} />
-      <div className='flex-grow flex flex-col lg:flex-row'>
-        <Chat visible={activeTools.chat} toggleCard={() => handleToolChange('chat')} />
-      </div>
-      <div className='flex-grow flex flex-col lg:flex-row'>
-        <Tasks visible={activeTools.tasks} toggleCard={() => handleToolChange('tasks')} />
-        <Timer visible={activeTools.timer} toggleCard={() => handleToolChange('timer')} />
-        <Spaces visible={activeTools.spaces} toggleCard={() => handleToolChange('spaces')} />
-        <Music visible={activeTools.music} toggleCard={() => handleToolChange('music')} />
-        <main className='flex-grow p-4'>{children}</main>
-      </div>
+    <div className='relative min-h-screen'>
+      {/* Startup Screen */}
+      {/* {!isStarted && (
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 ${
+            isAnimating ? 'animate-scaleOut' : 'animate-scaleIn'
+          }`}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <img
+              src="/logowhite.png"
+              alt="logo"
+              className="w-[50%] h-[50%]"
+            />
+            <h1 className="text-white text-2xl animate-blink">
+              Press Enter to start
+            </h1>
+          </div>
+        </div>
+      )} */}
+
+      {/* Main Room Content */}
+      <Scenes />
+      <ChatWidget />
+      <Header />
+      {/* {isStarted && (
+        <>
+          <Header />
+         <Music /> 
+        </>
+      )} */}
+
+      {/* Mobile View Warning */}
+      {/* {isMobileView && (
+        <div className='fixed inset-0 z-50 bg-black/70 flex items-center justify-center backdrop-blur-md'>
+          <img src='/responsive.png' alt='mobile' className='w-1/2 h-auto rounded-md' />
+        </div>
+      )} */}
     </div>
   )
 }

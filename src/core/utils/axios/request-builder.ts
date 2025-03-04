@@ -7,7 +7,7 @@ export interface IRequestBuilder {
 export class RequestBuilder implements IRequestBuilder {
   private prefix: string = 'api'
   private version: string = 'v1'
-  private resourcePath: string = 'auth'
+  private resourcePath?: string
   setPrefix(prefix: string): this {
     this.prefix = prefix
     return this
