@@ -1,6 +1,6 @@
 'use client'
 
-import {Button} from '@src/components/ui/button'
+import {Button} from '@src/core/components/ui/button'
 import React from 'react'
 
 export default class ErrorBoundary extends React.Component<
