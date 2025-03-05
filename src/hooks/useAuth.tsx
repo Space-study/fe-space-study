@@ -7,7 +7,16 @@ export function useAuth() {
   const pathname = usePathname()
 
   useEffect(() => {
-    const publicRoute = ['/auth/login', '/auth/register', '/blog', '/blog/[slug]', '/']
+    const publicRoute = [
+      '/auth/login',
+      '/auth/register',
+      '/blog',
+      '/blog/[slug]',
+      '/',
+      '/confirm-email',
+      '/forgot-password/confirm',
+      '/forgot-password/reset',
+    ]
     const token = localStorage.getItem('authToken')
     if (!token) {
       if (!publicRoute.includes(pathname)) {

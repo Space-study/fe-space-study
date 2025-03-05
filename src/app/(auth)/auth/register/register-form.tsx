@@ -6,6 +6,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
+import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useEffect} from 'react'
@@ -26,24 +27,15 @@ export default function RegisterForm() {
 
   async function onSubmit(data: RegisterData) {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/email/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json() // Parse the error response
-        alert(`Registration failed: ${errorData.message || 'Something went wrong.'}`)
+      const response = await axiosInstance.post('api/v1/auth/email/register', data)
+      if (response) {
+        alert('Register Success')
       } else {
-        alert('Registration successful. Please verify your email to continue.')
+        alert('Register failed')
       }
-
-      form.reset() // Reset the form
-    } catch (err) {
-      console.error('Error during registration:', err)
+      form.reset()
+    } catch (error) {
+      console.error('Error during registration:', error)
       alert('An unexpected error occurred. Please try again later.')
     }
   }
