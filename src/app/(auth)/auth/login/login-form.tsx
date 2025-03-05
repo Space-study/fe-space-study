@@ -33,7 +33,6 @@ export default function LoginForm() {
   async function onSubmit(data: LoginData) {
     try {
       const response = await axiosInstance.post('api/v1/auth/email/login', data)
-      console.log('response', response)
       if (response.status !== 200) {
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
@@ -73,7 +72,6 @@ export default function LoginForm() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
-    console.log('token', token)
     if (token) {
       document.cookie = `refreshToken=${token}; path=/;`
       localStorage.setItem('authToken', token)
