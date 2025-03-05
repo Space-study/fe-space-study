@@ -2,6 +2,7 @@
 
 import {loginSchema, type LoginData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
+import {useUser} from '@src/app/shared/UserProvider'
 import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
@@ -19,6 +20,7 @@ import authImg1 from '../authImg1.webp'
 export default function LoginForm() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const {login} = useUser()
   const form = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,9 +40,20 @@ export default function LoginForm() {
         })
         return
       }
-      localStorage.setItem('authToken', response.data.token)
-      document.cookie = `refreshToken=${response.data.refreshToken}; path=/;`
-      router.push('/')
+
+      const result = response.data
+      console.log('result', result)
+      // localStorage.setItem('authToken', result?.token)
+      // document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
+      if (result?.user) {
+        login({
+          user: result.user,
+          token: result.token,
+          refreshToken: result.refreshToken,
+          tokenExpires: result.tokenExpires,
+        })
+        router.push('/')
+      }
     } catch (error) {
       console.error('Error during login:', error)
       form.setError('root', {

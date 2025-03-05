@@ -1,92 +1,143 @@
-'use client'
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {useChatStore} from '@src/core/store/chat-store'
+import {ChatMessagesResponse, Message} from '@src/core/types/chat-message.type'
 import {useCallback, useEffect, useRef, useState} from 'react'
-import {useLatest} from './use-latest'
+import {io, Socket} from 'socket.io-client'
 
-type WebSocketConfig = {
-  url: string
-  onMessage?: (event: MessageEvent) => void
-  onOpen?: (event: Event) => void
-  onClose?: (event: CloseEvent) => void
-  onError?: (error: Error) => void
-  reconnectAttempts?: number
-  reconnectInterval?: number
-}
-
-export const useWebSocket = ({
-  url,
-  onMessage,
-  onOpen,
-  onClose,
-  onError,
-  reconnectAttempts = 5,
-  reconnectInterval = 3000,
-}: WebSocketConfig) => {
-  const wsRef = useRef<WebSocket | null>(null)
-  const reconnectCountRef = useRef(0)
-  const latestOnMessage = useLatest(onMessage)
+export const useWebSocket = (token: string) => {
+  const socketRef = useRef<Socket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
+  const {addMessage} = useChatStore()
 
-  const connect = useCallback(() => {
-    if (!url) {
-      console.error('WebSocket URL is not provided')
-      onError?.(new Error('WebSocket URL is not provided'))
-      return
-    }
-
-    try {
-      wsRef.current = new WebSocket(url)
-
-      wsRef.current.onopen = event => {
-        console.log('WebSocket connected')
+  const setupSocketHandlers = useCallback(
+    (socket: Socket) => {
+      socket.on('connect', () => {
         setIsConnected(true)
-        reconnectCountRef.current = 0
-        onOpen?.(event)
-      }
+      })
 
-      wsRef.current.onmessage = event => {
-        latestOnMessage.current?.(event)
-      }
-
-      wsRef.current.onclose = event => {
-        console.log('WebSocket disconnected')
+      socket.on('disconnect', () => {
         setIsConnected(false)
-        onClose?.(event)
-        if (reconnectCountRef.current < reconnectAttempts) {
-          reconnectCountRef.current++
-          console.log(`Attempting to reconnect (${reconnectCountRef.current}/${reconnectAttempts})`)
-          setTimeout(connect, reconnectInterval)
-        } else {
-          console.error('Max reconnection attempts reached')
-          onError?.(new Error('Max reconnection attempts reached'))
-        }
-      }
+      })
 
-      wsRef.current.onerror = event => {
-        console.error('WebSocket error:', event)
-        onError?.(new Error('WebSocket connection error'))
-        wsRef.current?.close()
-      }
-    } catch (error) {
-      console.error('WebSocket connection error:', error)
-      onError?.(error instanceof Error ? error : new Error('Unknown WebSocket error'))
-    }
-  }, [url, onOpen, onClose, onError, reconnectAttempts, reconnectInterval, latestOnMessage])
+      socket.on('error', (error: Error) => {
+        console.error('Socket error:', error)
+        setIsConnected(false)
+      })
+
+      socket.on('connect_error', error => {
+        console.error('Connection error:', error)
+        setIsConnected(false)
+      })
+
+      socket.on('userJoined', (data: any) => {})
+
+      socket.on('userLeft', (data: any) => {})
+
+      socket.on('newMessage', (message: Message) => {
+        addMessage({
+          id: message.id,
+          content: message.content,
+          sender: {
+            id: parseInt(message.user.id),
+            name: `${message.user.firstName} ${message.user.lastName}`.trim(),
+            avatar: message.user.avatar,
+          },
+          timestamp: message.createdAt,
+          status: 'sent',
+        })
+      })
+    },
+    [addMessage],
+  )
 
   useEffect(() => {
-    connect()
-    return () => {
-      wsRef.current?.close()
-    }
-  }, [connect])
+    if (!token) return
 
-  const sendMessage = useCallback((data: unknown) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(data))
-      return true
+    if (!socketRef.current) {
+      socketRef.current = io(process.env.NEXT_PUBLIC_WS_URL, {
+        auth: {
+          token,
+        },
+      })
+
+      setupSocketHandlers(socketRef.current)
     }
-    return false
+
+    return () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.disconnect()
+        socketRef.current = null
+      }
+    }
+  }, [token, setupSocketHandlers])
+
+  const joinChat = useCallback(async (chatId: string) => {
+    return new Promise((resolve, reject) => {
+      if (!socketRef.current) {
+        console.error('Socket not connected when trying to join chat')
+        return reject(new Error('Socket not connected'))
+      }
+
+      socketRef.current.emit('joinChat', {chatId}, (response: any) => {
+        if (response?.error) {
+          console.error('Error joining chat:', response.error)
+          reject(new Error(response.error))
+        } else {
+          resolve(response)
+        }
+      })
+    })
   }, [])
 
-  return {sendMessage, isConnected}
+  const leaveChat = useCallback(async (chatId: string) => {
+    return new Promise((resolve, reject) => {
+      if (!socketRef.current) return reject('Socket not connected')
+
+      socketRef.current.emit('leaveChat', {chatId}, (response: any) => {
+        if (response.error) {
+          reject(response.error)
+        } else {
+          resolve(response)
+        }
+      })
+    })
+  }, [])
+
+  const sendMessage = useCallback(async (chatId: string, content: string) => {
+    return new Promise<Message>((resolve, reject) => {
+      if (!socketRef.current) return reject('Socket not connected')
+
+      socketRef.current.emit('sendMessage', {data: {chatId, content}}, (response: any) => {
+        if (response.error) {
+          reject(response.error)
+        } else {
+          resolve(response)
+        }
+      })
+    })
+  }, [])
+
+  const getChatMessages = useCallback(async (chatId: string, page = 1, limit = 20) => {
+    return new Promise<ChatMessagesResponse>((resolve, reject) => {
+      if (!socketRef.current) return reject('Socket not connected')
+
+      socketRef.current.emit('getChatMessages', {chatId, page, limit}, (response: any) => {
+        if (response.error) {
+          reject(response.error)
+        } else {
+          resolve(response)
+        }
+      })
+    })
+  }, [])
+
+  return {
+    socket: socketRef.current,
+    joinChat,
+    leaveChat,
+    sendMessage,
+    getChatMessages,
+    isConnected,
+  }
 }
