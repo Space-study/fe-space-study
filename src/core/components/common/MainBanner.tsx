@@ -8,7 +8,7 @@ const MainBanner = () => {
           "url('https://media0.giphy.com/media/oTnyrIL4iTsiZ8FiPO/200w.gif?cid=6c09b952iijc85q9e82wiijhdlpijz63mwillo2y3ryz8ma9&ep=v1_gifs_search&rid=200w.gif&ct=g')",
         backgroundPosition: 'center',
         backgroundSize: 'cover',
-        height: '85vh',
+        height: '100vh',
       }}>
       <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center'>
         <div className='container mx-auto px-4'>
