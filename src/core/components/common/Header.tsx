@@ -1,8 +1,13 @@
-// import {Avatar, AvatarFallback, AvatarImage} from '@src/components/ui/avatar'
-import {Button} from '@src/components/ui/button'
+'use client'
+
+import {Button} from '@src/core/components/ui/button'
 import Link from 'next/link'
+import {usePathname} from 'next/navigation'
 
 const Header = () => {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
   const navItems = [
     {href: '/', label: 'Home'},
     {href: '/meetings', label: 'Meetings'},
@@ -11,52 +16,34 @@ const Header = () => {
     {href: '/blog', label: 'Blog'},
     {href: '/contact', label: 'Contact Us'},
   ]
+
   return (
-    <header className='container shadow sticky top-0 z-50 bg-transparent'>
-      <div className='w-screen fixed flex justify-around'>
-        <div className='flex inline-flex justify-between items-center py-4 '>
-          <Link href='/' className='text-2xl font-bold text-gray-800 text-white'>
-            Edu Smart
-          </Link>
-        </div>
-        <div className='flex inline-flex justify-between items-center py-4'>
-          <nav className='flex items-center py-4'>
-            <ul className='flex space-x-6'>
-              {navItems.map(item => (
-                <li key={item.href}>
-                  <Link href={item.href} className='text-white hover:text-red-500'>
-                    {item.label}
-                  </Link>
-                </li>
-                /* <li className='relative group'>
-                <span className='text-gray-700 hover:text-red-500 cursor-pointer'>Pages</span>
-                <ul className='absolute hidden group-hover:block bg-white shadow rounded mt-2'>
-                  <li>
-                    <Link href='/meetings' className='block px-4 py-2 hover:bg-gray-100'>
-                      Upcoming Meetings
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href='/meeting-details' className='block px-4 py-2 hover:bg-gray-100'>
-                      Meeting Details
-                    </Link>
-                  </li>
-                </ul>
-              </li> */
-              ))}
-            </ul>
-          </nav>
-        </div>
-        <div className='flex inline-flex justify-between items-center py-4 rounded-full'>
-          <Button variant='ghost'>Login</Button>
-          {/* <Button variant='ghost'>
-            <Avatar className='w-8 h-8'>
-              <AvatarImage src='https://github.com/shadcn.png' />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <p className='font-sans'>Username</p>
+    <header
+      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
+      <div className='container mx-auto flex items-center justify-between py-4 px-6'>
+        {/* Logo */}
+        <Link href='/' className='text-2xl font-bold text-gray-900'>
+          Edu Smart
+        </Link>
+
+        {/* Navigation */}
+        <nav>
+          <ul className='flex space-x-6'>
+            {navItems.map(item => (
+              <li key={item.href}>
+                <Link href={item.href} className=' hover:text-red-500 transition duration-300'>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Auth Buttons */}
+        <div className='flex items-center gap-4'>
+          <Button variant='ghost' className=' hover:text-red-500'>
+            Login
           </Button>
-          <Button variant='ghost'>Logout</Button> */}
         </div>
       </div>
     </header>
