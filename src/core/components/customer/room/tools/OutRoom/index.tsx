@@ -15,12 +15,7 @@ const OutRoom: React.FC = () => {
   const handleOutRoom = async () => {
     const confirmLeave = window.confirm('Are you sure you want to leave the room?')
     if (confirmLeave) {
-      const res = await axiosInstance.post('/api/v1/auth/logout')
-      if (res) {
-        router.push('/')
-        localStorage.removeItem('authToken')
-        document.cookie = 'refreshToken=; Max-Age=0; path=/;'
-      }
+      router.push('/')
     }
   }
 

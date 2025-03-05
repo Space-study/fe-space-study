@@ -1,5 +1,6 @@
 'use client'
 
+import {httpClient} from '@src/core/utils/axios'
 import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import {useRouter, useSearchParams} from 'next/navigation'
 import {Suspense, useEffect, useState} from 'react'
@@ -20,7 +21,7 @@ const ConfirmEmailComponent = () => {
 
   const verifyEmailToken = async (hash: string) => {
     try {
-      const response = await axiosInstance.post('api/v1/auth/email/confirm', {hash})
+      const response = await verifyEmailToken({hash}) // Gọi hàm verifyEmailToken
 
       if (response) {
         setStatus('success')

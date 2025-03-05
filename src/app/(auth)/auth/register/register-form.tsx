@@ -1,18 +1,19 @@
 'use client'
 
+import {register} from '@/core/services/auth/auth-service' // Import the register function
 import {registerSchema, type RegisterData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
-import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useEffect} from 'react'
 import {useForm} from 'react-hook-form'
 import {FcGoogle} from 'react-icons/fc'
 import authImg1 from '../authImg1.webp'
+
 export default function RegisterForm() {
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -27,12 +28,8 @@ export default function RegisterForm() {
 
   async function onSubmit(data: RegisterData) {
     try {
-      const response = await axiosInstance.post('api/v1/auth/email/register', data)
-      if (response) {
-        alert('Register Success')
-      } else {
-        alert('Register failed')
-      }
+      await register(data) // Call the register function from auth-service
+      alert('Register Success')
       form.reset()
     } catch (error) {
       console.error('Error during registration:', error)

@@ -1,6 +1,18 @@
+import {isUserLoggedIn, logout} from '@src/core/services/auth/auth-service'
 import Link from 'next/link'
+import {HiOutlineLogout} from 'react-icons/hi'
 
 const Header = () => {
+  async function handleLogout() {
+    try {
+      await logout()
+      localStorage.removeItem('authToken')
+      document.cookie = 'refreshToken=; Max-Age=0; path=/;'
+      window.location.reload()
+    } catch (error) {
+      console.error('Error during logout:', error)
+    }
+  }
   return (
     <header className='bg-white shadow sticky top-0 z-50'>
       <div className='container mx-auto px-4'>
@@ -55,6 +67,15 @@ const Header = () => {
                   Contact Us
                 </Link>
               </li>
+              {isUserLoggedIn() && (
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className='text-gray-700 hover:text-red-500 flex items-center'>
+                    <HiOutlineLogout />
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         </div>

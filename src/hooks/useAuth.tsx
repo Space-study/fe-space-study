@@ -23,7 +23,7 @@ export function useAuth() {
         router.push('/auth/login')
       }
     } else {
-      router.push('/room')
+      router.push('/')
     }
   }, [router, pathname])
 }

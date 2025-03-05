@@ -1,12 +1,12 @@
 'use client'
 
+import {login} from '@/core/services/auth/auth-service' // Import the login function
 import {loginSchema, type LoginData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
-import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
@@ -25,21 +25,23 @@ export default function LoginForm() {
       email: '',
       password: '',
     },
-    mode: 'onTouched', // Validate on touch
+    mode: 'onTouched',
   })
 
   async function onSubmit(data: LoginData) {
     try {
-      const response = await axiosInstance.post('api/v1/auth/email/login', data)
+      const response = await login(data) // Use login from auth-service
       console.log('response', response)
-      if (response.status !== 200) {
+
+      if (!response?.token) {
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
         })
         return
       }
-      localStorage.setItem('authToken', response.data.token)
-      document.cookie = `refreshToken=${response.data.refreshToken}; path=/;`
+
+      localStorage.setItem('authToken', response.token)
+      document.cookie = `refreshToken=${response.refreshToken}; path=/;`
       router.push('/')
     } catch (error) {
       console.error('Error during login:', error)
@@ -69,7 +71,7 @@ export default function LoginForm() {
   }, [])
 
   return (
-    <div className='flex min-h-screen '>
+    <div className='flex min-h-screen'>
       <div className='flex w-full items-center justify-center lg:w-1/2'>
         <div className='mx-auto w-full max-w-sm space-y-6 px-4'>
           <div className='space-y-2 text-center'>
@@ -161,7 +163,7 @@ export default function LoginForm() {
             </Link>
           </div>
           <div className='text-center text-sm text-gray-500'>
-            Don&apos;t have an account?{' '}
+            Don't have an account?{' '}
             <Link href='/auth/register' className='text-[#4F46E5] hover:underline'>
               Create Account
             </Link>
