@@ -49,6 +49,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.dragosroua.com',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '9090',
+        pathname: '/**',
+      },
     ],
   },
 }

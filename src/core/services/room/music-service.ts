@@ -1,6 +1,6 @@
 // src/core/services/music.service.ts
 import { httpClient } from '@/core/utils/axios';
-import { RequestBuilder, IRequestBuilder } from '../utils/axios/request-builder';
+import { RequestBuilder, IRequestBuilder } from '../../utils/axios/request-builder';
 
 export interface Music {
   id: number;

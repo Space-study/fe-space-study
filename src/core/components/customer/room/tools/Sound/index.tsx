@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import SoundItem from './SoundItem';
-import { musicService } from '@src/core/services/music-service';
-import type { Music } from '@src/core/services/music-service';
+import { musicService } from '@src/core/services/room/music-service';
+import type { Music } from '@src/core/services/room/music-service';
 
 type Sound = {
   id: string;
