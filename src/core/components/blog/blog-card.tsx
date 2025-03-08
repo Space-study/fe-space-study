@@ -6,12 +6,12 @@ interface BlogCardProps {
   category: string
   author: string
   imageUrl: string
-  slug: string
+  blog_id: number
 }
 
-export function BlogCard({title, category, author, imageUrl, slug}: BlogCardProps) {
+export function BlogCard({title, category, author, imageUrl, blog_id}: BlogCardProps) {
   return (
-    <Link href={`/blog/${slug}`} className='block'>
+    <Link href={`/blog/${blog_id}`} className='block'>
       <article className='rounded-lg overflow-hidden group bg-white shadow-sm hover:shadow-md transition-shadow'>
         <div className='relative aspect-[4/3] overflow-hidden'>
           <Image

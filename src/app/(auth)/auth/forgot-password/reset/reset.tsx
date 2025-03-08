@@ -11,7 +11,7 @@ import Link from 'next/link'
 import {useRouter, useSearchParams} from 'next/navigation'
 import {Suspense, useEffect, useState} from 'react'
 import {useForm} from 'react-hook-form'
-import authImg1 from '../../auth/authImg1.webp'
+import authImg1 from '../../authImg1.webp'
 
 function ResetPasswordComponent() {
   const router = useRouter()

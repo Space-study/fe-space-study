@@ -1,5 +1,6 @@
 'use client'
 
+import {useUser} from '@src/app/shared/UserProvider'
 import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
 import {Button} from '@src/core/components/ui/button'
 import {apiPath} from '@src/core/utils/api'
@@ -10,7 +11,8 @@ import {useEffect, useState} from 'react'
 const Header = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const [user, setUser] = useState<{username: string; role: string; avatar: string} | null>(null)
+  const [_user, setUser] = useState<{username: string; role: string; avatar: string} | null>(null)
+  const {user, logout} = useUser()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -45,9 +47,14 @@ const Header = () => {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('user_info')
-    setUser(null)
+    const confirm = window.confirm('Are you sure you want to logout?')
+    if (confirm) {
+      localStorage.removeItem('authToken')
+      document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
+      logout()
+    } else {
+      return
+    }
   }
 
   const navItems = [
@@ -86,8 +93,8 @@ const Header = () => {
           {user ? (
             <div className='flex items-center gap-3'>
               <Avatar>
-                <AvatarImage src={user.avatar || '/default-avatar.png'} />
-                <AvatarFallback>{user.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={_user?.avatar || '/default-avatar.png'} />
+                <AvatarFallback>{_user?.username?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <Button variant='ghost' className='hover:text-red-500' onClick={handleLogout}>
                 Logout

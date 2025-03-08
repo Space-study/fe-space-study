@@ -1,52 +1,43 @@
+'use client'
+
 import {BlogCard} from '@/core/components/blog/blog-card'
 import {CategoryNav} from '@/core/components/blog/category-nav'
-
-const blogPosts = [
-  {
-    title: '10 Highly Effective Ways to Relieve Stress and Anxiety',
-    category: 'Stress & Anxiety',
-    author: 'Angela Loy',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'stress-and-anxiety',
-  },
-  {
-    title: "Why Self-Doubt Means You're on the Right Path: A Guide to Imposter Syndrome",
-    category: 'Personal Growth',
-    author: 'Emma Loft',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'self-doubt-right-path',
-  },
-  {
-    title: 'From Burnout to Brilliance: How to Rekindle Your Passion for Your Work',
-    category: 'Personal Growth',
-    author: 'Angela Loy',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'burnout-to-brilliance',
-  },
-  {
-    title: 'The Case for Doing Nothing: Why Embracing Downtime is Essential for Mental Health',
-    category: 'Personal Growth',
-    author: 'Angela Loy',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'case-for-doing-nothing',
-  },
-  {
-    title: 'Batching vs. Multitasking: Which is Best for You?',
-    category: 'Productivity',
-    author: 'Nadia Lemay',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'batching-vs-multitasking',
-  },
-  {
-    title: 'How to Use the Pomodoro Technique Effectively',
-    category: 'Productivity',
-    author: 'Nadia Lemay',
-    imageUrl: '/placeholder.svg?height=400&width=600',
-    slug: 'pomodoro-technique',
-  },
-]
+import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
+import {useEffect, useState} from 'react'
 
 export default function Page() {
+  // interface Blog {
+  //   title: string;
+  //   category: string;
+  //   author: string;
+  //   thumbnail_path: string;
+  //   blog_id: number;
+  // }
+
+  type Blog = {
+    title: string
+    category: string
+    author: string
+    thumbnail_path: string
+    blog_id: number
+  }
+
+  const [blogs, setBlogs] = useState<Blog[]>([])
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axiosInstance.get<Blog[]>('api/v1/blogs')
+        setBlogs(response.data)
+        console.log('Blogs:', response)
+      } catch (error) {
+        console.log('Error fetching blogs:', error)
+      }
+    }
+
+    fetchBlogs()
+  }, [])
+
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='bg-white shadow-sm sticky top-0 z-10'>
@@ -58,14 +49,14 @@ export default function Page() {
 
       <div className='px-4 py-8'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto'>
-          {blogPosts.map((post, index) => (
+          {blogs.map((post, index) => (
             <BlogCard
               key={index}
-              title={post.title}
-              category={post.category}
-              author={post.author}
-              imageUrl={post.imageUrl}
-              slug={post.slug}
+              title={post?.title}
+              category={post?.category}
+              author={post?.author}
+              imageUrl={post.thumbnail_path}
+              blog_id={post.blog_id}
             />
           ))}
         </div>
