@@ -33,7 +33,6 @@ export default function LoginForm() {
   async function onSubmit(data: LoginData) {
     try {
       const response = await axiosInstance.post('api/v1/auth/email/login', data)
-      console.log('response', response)
       if (response.status !== 200) {
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
@@ -42,9 +41,8 @@ export default function LoginForm() {
       }
 
       const result = response.data
-      console.log('result', result)
-      // localStorage.setItem('authToken', result?.token)
-      // document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
+      localStorage.setItem('authToken', result?.token)
+      document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
       if (result?.user) {
         login({
           user: result.user,
@@ -52,7 +50,11 @@ export default function LoginForm() {
           refreshToken: result.refreshToken,
           tokenExpires: result.tokenExpires,
         })
-        router.push('/')
+        if (result.user.role.name === 'Admin') {
+          router.push('/dashboard')
+        } else if (result.user.role.name === 'User') {
+          router.push('/')
+        }
       }
     } catch (error) {
       console.error('Error during login:', error)
@@ -73,7 +75,6 @@ export default function LoginForm() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
-    console.log('token', token)
     if (token) {
       document.cookie = `refreshToken=${token}; path=/;`
       localStorage.setItem('authToken', token)
@@ -169,7 +170,7 @@ export default function LoginForm() {
           </Form>
 
           <div className='text-center text-sm'>
-            <Link href='/forgot-password/confirm' className='text-[#4F46E5] hover:underline'>
+            <Link href='forgot-password/confirm' className='text-[#4F46E5] hover:underline'>
               Forgot password?
             </Link>
           </div>
