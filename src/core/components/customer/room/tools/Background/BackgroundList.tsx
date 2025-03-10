@@ -1,7 +1,8 @@
 import BackgoundItem from '@/core/components/customer/room/tools/Background/BackgroundItem'
 import {setBackground} from '@/core/redux/slices/backgroundSlice'
+import {backgroundService} from '@/core/services/room/background-service'
 import Image from 'next/image'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import toast from 'react-hot-toast'
 import {useDispatch} from 'react-redux'
 
@@ -10,21 +11,58 @@ interface BackgoundListProps {
 }
 
 interface Background {
+  background_id?: number
   name: string
   image: string
   isCustom: boolean
 }
 
-const BackgoundList: React.FC<BackgoundListProps> = ({}) => {
-  const [BackgoundListData, setBackgoundListData] = useState<Background[]>([])
+const BackgoundList: React.FC<BackgoundListProps> = ({onCloseModal}) => {
+  const [backgroundListData, setBackgroundListData] = useState<Background[]>([])
   const dispatch = useDispatch()
-  const handleAddBackgound = (imageUrl: string) => {
-    const newBackgound = {
-      name: `Backgound ${BackgoundListData.length + 1}`,
-      image: imageUrl,
-      isCustom: true,
+
+  useEffect(() => {
+    const loadBackgrounds = async () => {
+      try {
+        const backgrounds = await backgroundService.getAllBackgrounds()
+        const mappedBackgrounds = backgrounds.map(bg => ({
+          background_id: bg.background_id,
+          name: bg.title,
+          image: bg.thumbnail_path,
+          isCustom: false, // Adjust based on your API logic
+        }))
+        setBackgroundListData(mappedBackgrounds)
+      } catch (error) {
+        toast.error('Failed to load backgrounds')
+        console.error(error)
+      }
     }
-    setBackgoundListData([...BackgoundListData, newBackgound])
+    loadBackgrounds()
+  }, [])
+
+  const handleAddBackground = async (file: File) => {
+    try {
+      const newBackground = await backgroundService.createBackground({
+        title: `Background ${backgroundListData.length + 1}`,
+        file, // Pass the file directly
+        description: 'Custom background',
+        // category_id: 1, // Uncomment and set if needed
+        // user_create_id will need to come from auth context if required
+      })
+      setBackgroundListData([
+        ...backgroundListData,
+        {
+          background_id: newBackground.background_id,
+          name: newBackground.title,
+          image: newBackground.thumbnail_path,
+          isCustom: true,
+        },
+      ])
+      toast.success('Added background successfully!')
+    } catch (error) {
+      toast.error('Failed to add background')
+      console.error(error)
+    }
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,34 +72,39 @@ const BackgoundList: React.FC<BackgoundListProps> = ({}) => {
         toast.error('Please select an image file.')
         return
       }
-      const reader = new FileReader()
-      reader.onload = () => {
-        handleAddBackgound(reader.result as string)
-        toast.success('Added Backgound successfully!')
-      }
-      reader.readAsDataURL(file)
+      handleAddBackground(file)
     }
   }
 
-  const handleSelectBackgound = (name: string, image: string) => {
-    dispatch(setBackground(image)) // Dispatch action to update the background
+  const handleSelectBackground = (name: string, image: string) => {
+    dispatch(setBackground(image))
     toast.success(`Selected ${name} as background!`)
+    if (onCloseModal) onCloseModal()
   }
 
-  const handleDeleteBackgound = (name: string) => {
-    setBackgoundListData(BackgoundListData.filter(Backgound => Backgound.name !== name))
+  const handleDeleteBackground = async (backgroundId: number | undefined) => {
+    if (!backgroundId) return
+    try {
+      await backgroundService.deleteBackground(backgroundId)
+      setBackgroundListData(backgroundListData.filter(bg => bg.background_id !== backgroundId))
+      toast.success('Deleted background successfully!')
+    } catch (error) {
+      toast.error('Failed to delete background')
+      console.error(error)
+    }
   }
 
   return (
     <ul className='flex gap-2 flex-wrap overflow-y-auto max-h-[75vh] scroll-smooth items-center justify-center mt-6'>
-      {BackgoundListData.map(Backgound => (
+      {backgroundListData.map(bg => (
         <BackgoundItem
-          key={Backgound.name}
-          name={Backgound.name}
-          image={Backgound.image}
-          isCustom={Backgound.isCustom}
-          onSelectBackgound={handleSelectBackgound}
-          onDeleteBackgound={handleDeleteBackgound}
+          key={bg.background_id || bg.name}
+          backgroundId={bg.background_id}
+          name={bg.name}
+          image={bg.image}
+          isCustom={bg.isCustom}
+          onSelectBackground={handleSelectBackground}
+          onDeleteBackground={() => handleDeleteBackground(bg.background_id)}
         />
       ))}
       <li className='cursor-pointer m-2 text-center transition-all duration-500 ease-in-out rounded-sm border'>

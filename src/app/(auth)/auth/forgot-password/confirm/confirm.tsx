@@ -10,7 +10,7 @@ import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useForm} from 'react-hook-form'
-import authImg1 from '../../auth/authImg1.webp'
+import authImg1 from '../../authImg1.webp'
 
 export default function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordData>({

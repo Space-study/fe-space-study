@@ -3,6 +3,7 @@ import ErrorBoundary from '@src/app/shared/ErrorBoundary'
 import LoadingPage from '@src/app/shared/LoadingPage'
 import {SidebarProvider} from '@src/core/components/ui/sidebar'
 import {Toaster} from '@src/core/components/ui/sonner'
+import {AuthProvider} from '@src/hooks/useAuth'
 import React, {Suspense} from 'react'
 
 export default function RootLayout({
@@ -11,14 +12,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <SidebarProvider>
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingPage />}>
-          <AppSidebar />
-          {children}
-          <Toaster />
-        </Suspense>
-      </ErrorBoundary>
-    </SidebarProvider>
+    <AuthProvider>
+      <SidebarProvider>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <AppSidebar />
+            {children}
+            <Toaster />
+          </Suspense>
+        </ErrorBoundary>
+      </SidebarProvider>
+    </AuthProvider>
   )
 }
