@@ -4,6 +4,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Input} from '@src/core/components/ui/input'
 import {Table} from '@tanstack/react-table'
 import {ShieldBan, ShieldCheck, X} from 'lucide-react'
+import {AddNew} from './dialog'
 import {DataTableFacetedFilter} from './tableFacetedFilter'
 import {DataTableViewOptions} from './tableViewOptions'
 
@@ -52,6 +53,7 @@ export function DataTableToolbar<TData>({table}: DataTableToolbarProps<TData>) {
           </Button>
         )}
       </div>
+      <AddNew />
       <DataTableViewOptions table={table} />
     </div>
   )

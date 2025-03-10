@@ -2,7 +2,7 @@
 
 import {UserType} from '@/core/components/admin/tableUserPart/columns'
 import {columns} from '@src/core/components/admin/tableUserPart/columns'
-// import {apiPath} from '@src/core/utils/api'
+import {RequestBuilder} from '@src/core/utils/axios/request-builder'
 import {useEffect, useState} from 'react'
 import {TableUi} from './tableUi'
 
@@ -15,8 +15,15 @@ export default function DataTable() {
     async function onUser() {
       try {
         const token = localStorage.getItem('authToken')
+        console.log(token)
         if (!token) return
-        const response = await fetch('http://localhost:8000/api/v1/users', {
+        const url = new RequestBuilder()
+          .setPrefix('api')
+          .setVersion('v1')
+          .setResourcePath('users')
+          .buildUrl()
+
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

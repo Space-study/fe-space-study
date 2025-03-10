@@ -23,7 +23,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import {useRouter} from 'next/navigation'
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useState} from 'react'
 import {DataTablePagination} from './tablePagination'
 import {DataTableToolbar} from './tableToolbar'
 
@@ -36,33 +36,21 @@ export function TableUi<TData extends {id: number}, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter()
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const router = useRouter()
-
-  const handleRowClick = useCallback(
-    (id?: number) => {
-      if (id !== undefined) {
-        router.push(`/user/${id.toString()}`)
-      }
-    },
-    [router],
-  )
 
   const table = useReactTable({
     data,
     columns,
-    state: useMemo(
-      () => ({
-        sorting,
-        columnVisibility,
-        rowSelection,
-        columnFilters,
-      }),
-      [sorting, columnVisibility, rowSelection, columnFilters],
-    ),
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+    },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -78,9 +66,11 @@ export function TableUi<TData extends {id: number}, TValue>({
 
   return (
     <div className='space-y-4'>
+      {/* Toolbar */}
       <DataTableToolbar table={table} />
       <div className='rounded-md border'>
-        <Table>
+        <Table aria-label='Data Table'>
+          {/* Table Header */}
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
@@ -94,14 +84,15 @@ export function TableUi<TData extends {id: number}, TValue>({
               </TableRow>
             ))}
           </TableHeader>
+          {/* Table Body */}
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
+                  onClick={() => router.push(`/user/${row.original.id}`)}
                   className='cursor-pointer hover:bg-gray-100'
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
-                  onClick={() => handleRowClick(row.original.id)}>
+                  data-state={row.getIsSelected() ? 'selected' : undefined}>
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -119,6 +110,7 @@ export function TableUi<TData extends {id: number}, TValue>({
           </TableBody>
         </Table>
       </div>
+      {/* Pagination */}
       <DataTablePagination table={table} />
     </div>
   )

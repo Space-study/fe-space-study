@@ -43,8 +43,8 @@ export default function LoginForm() {
 
       const result = response.data
       console.log('result', result)
-      // localStorage.setItem('authToken', result?.token)
-      // document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
+      localStorage.setItem('authToken', result?.token)
+      document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
       if (result?.user) {
         login({
           user: result.user,

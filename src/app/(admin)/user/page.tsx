@@ -6,8 +6,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from '@src/core/components/ui/breadcrumb'
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
@@ -22,11 +20,7 @@ export default function UserManage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href='#'>User Management</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className='hidden md:block' />
-              <BreadcrumbItem>
-                <BreadcrumbPage>List</BreadcrumbPage>
+                <BreadcrumbLink href='/user'>User List</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
