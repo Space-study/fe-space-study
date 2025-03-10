@@ -21,7 +21,7 @@ export class RequestBuilder implements IRequestBuilder {
     return this
   }
   buildUrl(additionalPath?: string): string {
-    const baseUrl = `/${this.prefix}/${this.version}/${this.resourcePath}`
+    const baseUrl = `http://localhost:8000/${this.prefix}/${this.version}/${this.resourcePath}`
     return additionalPath ? `${baseUrl}/${additionalPath}` : baseUrl
   }
 }

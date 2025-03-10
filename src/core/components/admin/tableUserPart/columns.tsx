@@ -1,6 +1,7 @@
 'use client'
 
 import {Checkbox} from '@src/core/components/ui/checkbox'
+import {UserType} from '@src/core/services/user/user-service'
 import {ColumnDef} from '@tanstack/react-table'
 import {ShieldBan, ShieldCheck} from 'lucide-react'
 import {DataTableColumnHeader} from './tableColumnHeader'
@@ -17,28 +18,6 @@ export const statuses = [
     icon: ShieldBan,
   },
 ]
-
-export interface UserType {
-  id: number
-  email: string
-  provider: string
-  socialId: string | null
-  firstName: string
-  lastName: string
-  role: {
-    id: number
-    name: string
-    __entity: string
-  }
-  status: {
-    id: number
-    name: string
-    __entity: string
-  }
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
-}
 
 // Function to format date
 const formatDate = (dateString: string | null) => {

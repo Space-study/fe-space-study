@@ -22,220 +22,92 @@ import {
 } from '@src/core/components/ui/select'
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
-import {RequestBuilder} from '@src/core/utils/axios/request-builder'
-import {useEffect, useMemo, useRef, useState} from 'react'
-
-interface UserProfile {
-  id: number
-  email: string
-  provider: string
-  socialId: string
-  firstName: string
-  lastName: string
-  photo: {
-    id: string
-    path: string
-  }
-  role: {
-    id: number
-    name: string
-  }
-  status: {
-    id: number
-    name: string
-  }
-  createdAt: string
-  updatedAt: string
-  deletedAt: string
-}
+import {uploadPhoto} from '@src/core/services/fileUpload/fileUpload-service'
+import {userService, UserType} from '@src/core/services/user/user-service'
+import {useEffect, useRef, useState} from 'react'
 
 const roles = ['Admin', 'User']
 
 export default function ProfilePage() {
-  const [detail, setDetail] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const token = localStorage.getItem('authToken')
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [detail, setDetail] = useState<UserType | null>(null)
   const [initialEmail, setInitialEmail] = useState<string | null>(null)
-
-  const url = useMemo(() => {
-    return new RequestBuilder()
-      .setPrefix('api')
-      .setVersion('v1')
-      .setResourcePath('users')
-      .buildUrl()
-  }, [])
-
-  const urlFile = useMemo(() => {
-    return new RequestBuilder()
-      .setPrefix('api')
-      .setVersion('v1')
-      .setResourcePath('files')
-      .buildUrl('upload')
-  }, [])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    async function fetchUserProfile() {
-      setLoading(true)
-      setError(null)
-
-      const id = window.location.pathname.split('/').pop()
-      if (!token) return
-
-      try {
-        const response = await fetch(`${url}/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+    const userId = window.location.pathname.split('/').pop()
+    if (userId) {
+      userService
+        .getUserById(Number(userId))
+        .then(user => {
+          setDetail(user)
+          setInitialEmail(user.email)
         })
+        .catch(error => alert(error.message))
+    }
+  }, [])
 
-        if (!response.ok) throw new Error(`Failed to fetch profile: ${response.status}`)
+  const handleChange = <K extends keyof UserType>(key: K, value: UserType[K]) => {
+    setDetail(prev => ({
+      ...prev!,
+      [key]: value ?? prev?.[key],
+    }))
+  }
 
-        const result = await response.json()
-        setDetail(prev => ({
-          ...result,
-          role: result.role ?? (prev?.role || {id: 0, name: ''}),
-          status: result.status ?? (prev?.status || {id: 0, name: ''}),
-        }))
-        setInitialEmail(result.email) // Lưu email ban đầu
+  const handleUploadPhoto = async (file: File): Promise<string> => {
+    if (file && detail) {
+      try {
+        const path = await uploadPhoto(file)
+        handleChange('photo', {path})
+        alert('Photo uploaded successfully!')
+        return path
       } catch (error) {
-        console.error('Error fetching profile:', error)
-        setError('Failed to fetch profile data. Please try again.')
-      } finally {
-        setLoading(false)
+        alert('Failed to upload photo!')
+        throw error
       }
     }
-
-    fetchUserProfile()
-  }, [url, token])
-
-  // Tái sử dụng để cập nhật state
-  const handleChange = (key: keyof UserProfile, value: unknown) => {
-    setDetail(prev => (prev ? {...prev, [key]: value} : null))
+    throw new Error('Invalid file or detail')
   }
 
-  // Thêm hàm upload file
-  async function uploadFile(file: File) {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    try {
-      const response = await fetch(urlFile, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      })
-
-      if (!response.ok) throw new Error(`Failed to upload file: ${response.status}`)
-
-      const result = await response.json()
-      console.log('File uploaded:', result)
-      return result.path // Trả về đường dẫn của file được tải lên
-    } catch (error) {
-      console.error('Error uploading file:', error)
-      throw error
-    }
-  }
-
-  const updateStatus = async (statusId: number) => {
+  const handleSave = async () => {
     if (!detail) return
-
     try {
-      setLoading(true)
-      setError(null)
-
-      // Cập nhật state trước
-      setDetail(prev => {
-        if (!prev) return null
-        return {
-          ...prev,
-          status: {
-            id: statusId,
-            name: statusId === 1 ? 'Active' : 'Inactive',
-          },
-        }
+      const updatedUser = await userService.updateUserProfile(detail.id, {
+        firstName: detail.firstName ?? initialEmail,
+        lastName: detail.lastName ?? '',
+        email: detail.email !== initialEmail ? detail.email : undefined,
+        role: detail.role ?? undefined,
+        status: detail.status ?? undefined,
       })
-
-      const response = await fetch(`${url}/${detail.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({status: {id: statusId}}),
-      })
-
-      if (!response.ok) throw new Error(`Failed to update status: ${response.status}`)
-
-      const result = await response.json()
-      setDetail(result) // Cập nhật lại state với dữ liệu mới
-      alert('Status updated successfully!')
-    } catch (error) {
-      console.error('Error updating status:', error)
-      setError('Failed to update status. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Cập nhật logic trong saveChange
-  async function saveChange() {
-    if (!detail) return
-
-    try {
-      setLoading(true)
-      setError(null)
-
-      if (!detail.email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(detail.email)) {
-        alert('Invalid email format')
-        return
-      }
-
-      // Chỉ gửi email nếu có sự thay đổi
-      const data: Record<string, unknown> = {
-        firstName: detail.firstName,
-        lastName: detail.lastName,
-        role: {
-          id: detail.role.id,
-          name: detail.role.name,
-        },
-      }
-
-      if (detail.email !== initialEmail) {
-        data.email = detail.email
-      }
-
-      console.log('Updating profile...')
-      const response = await fetch(`${url}/${detail.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) throw new Error(`Failed to update profile: ${response.status}`)
-
-      const result = await response.json()
-      setDetail(result)
-      setInitialEmail(result.email) // Cập nhật giá trị ban đầu sau khi lưu thành công
+      setDetail(updatedUser)
+      setInitialEmail(updatedUser.email)
       alert('Profile updated successfully!')
-    } catch (error) {
-      console.error('Error updating profile:', error)
-      setError('Failed to update profile. Please try again.')
-    } finally {
-      setLoading(false)
+
+      // Gọi lại API để cập nhật thông tin mới nhất từ server
+      const userId = window.location.pathname.split('/').pop()
+      if (userId) {
+        const refreshedUser = await userService.getUserById(Number(userId))
+        setDetail(refreshedUser)
+        setInitialEmail(refreshedUser.email)
+      }
+    } catch {
+      alert('Failed to update profile!')
     }
   }
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p className='text-red-500'>{error}</p>
+  const handleStatusUpdate = async (statusId: number) => {
+    if (!detail) return
+    try {
+      const updatedUser = await userService.updateUserStatus(detail.id, statusId)
+      setDetail(prev => ({
+        ...prev!,
+        status: updatedUser.status ?? prev?.status,
+      }))
+      alert('Status updated successfully!')
+    } catch {
+      alert('Failed to update status!')
+    }
+  }
+
   if (!detail) return null
 
   return (
@@ -281,12 +153,16 @@ export default function ProfilePage() {
                     const file = e.target.files?.[0]
                     if (file) {
                       try {
-                        console.log('Uploading photo...')
-                        const path = await uploadFile(file)
+                        const path = await handleUploadPhoto(file)
 
-                        // Update avatar immediately with the uploaded file path
-                        setDetail(prev => (prev ? {...prev, photo: {...prev.photo, path}} : null))
-
+                        setDetail(prev =>
+                          prev
+                            ? {
+                                ...prev,
+                                photo: {...prev.photo, path: path || prev.photo?.path || ''},
+                              }
+                            : null,
+                        )
                         alert('Photo uploaded successfully!')
                       } catch (error) {
                         console.error('Error uploading photo:', error)
@@ -298,25 +174,24 @@ export default function ProfilePage() {
                 <Button onClick={() => fileInputRef.current?.click()}>Upload Photo</Button>
               </div>
 
-              {/* First Name */}
               <div>
                 <Label>First Name</Label>
                 <Input
-                  value={detail?.firstName}
+                  value={detail?.firstName ?? ''}
                   onChange={e => handleChange('firstName', e.target.value)}
                 />
               </div>
               <div>
                 <Label>Last Name</Label>
                 <Input
-                  value={detail?.lastName}
+                  value={detail?.lastName ?? ''}
                   onChange={e => handleChange('lastName', e.target.value)}
                 />
               </div>
               <div>
                 <Label>Email</Label>
                 <Input
-                  value={detail?.email}
+                  value={detail?.email ?? ''}
                   onChange={e => handleChange('email', e.target.value)}
                 />
               </div>
@@ -325,14 +200,15 @@ export default function ProfilePage() {
               <div>
                 <Label>Role</Label>
                 <Select
-                  value={detail?.role?.name || ''}
+                  value={detail?.role?.name ?? undefined}
                   onValueChange={value => {
                     const selectedRole = roles.find(role => role === value)
+                    console.log(selectedRole)
                     handleChange(
                       'role',
                       selectedRole
                         ? {id: selectedRole === 'Admin' ? 1 : 2, name: selectedRole}
-                        : {id: 0, name: ''},
+                        : {id: detail?.role?.id ?? 0, name: detail?.role?.name ?? ''},
                     )
                   }}>
                   <SelectTrigger>
@@ -350,9 +226,12 @@ export default function ProfilePage() {
               <div>
                 <Label>Status</Label>
                 <Input
-                  value={detail?.status?.name}
+                  value={detail?.status?.name ?? ''}
                   onChange={e =>
-                    setDetail({...detail, status: {...detail.status, name: e.target.value}})
+                    setDetail(prev => ({
+                      ...prev!,
+                      status: {...prev!.status, name: e.target.value},
+                    }))
                   }
                   disabled
                 />
@@ -360,36 +239,46 @@ export default function ProfilePage() {
               <div>
                 <Label>Created At</Label>
                 <Input
-                  value={new Intl.DateTimeFormat('en-US').format(new Date(detail?.createdAt))}
+                  value={
+                    detail?.createdAt
+                      ? new Intl.DateTimeFormat('en-US').format(new Date(detail?.createdAt))
+                      : ''
+                  }
                   disabled
                 />
               </div>
+
               <div>
                 <Label>Updated At</Label>
                 <Input
-                  value={new Intl.DateTimeFormat('en-US').format(new Date(detail?.updatedAt))}
+                  value={
+                    detail?.updatedAt
+                      ? new Intl.DateTimeFormat('en-US').format(new Date(detail?.updatedAt))
+                      : ''
+                  }
                   disabled
                 />
               </div>
+
               {detail.status?.id === 1 ? (
                 <Button
                   className='w-full space-x-4'
                   variant='destructive'
-                  onClick={() => updateStatus(2)}>
+                  onClick={() => handleStatusUpdate(2)}>
                   Set Inactive
                 </Button>
               ) : (
                 <Button
                   className='w-full space-x-4 bg-emerald-500'
                   variant='default'
-                  onClick={() => updateStatus(1)}>
+                  onClick={() => handleStatusUpdate(1)}>
                   Set Active
                 </Button>
               )}
 
               {/* Save Button */}
               <div className='flex space-x-4'>
-                <Button className='flex-1' onClick={saveChange}>
+                <Button className='flex-1' onClick={handleSave}>
                   Save Changes
                 </Button>
                 <Button
