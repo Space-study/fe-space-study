@@ -81,14 +81,6 @@ export default function ProfilePage() {
       setDetail(updatedUser)
       setInitialEmail(updatedUser.email)
       alert('Profile updated successfully!')
-
-      // Gọi lại API để cập nhật thông tin mới nhất từ server
-      const userId = window.location.pathname.split('/').pop()
-      if (userId) {
-        const refreshedUser = await userService.getUserById(Number(userId))
-        setDetail(refreshedUser)
-        setInitialEmail(refreshedUser.email)
-      }
     } catch {
       alert('Failed to update profile!')
     }
