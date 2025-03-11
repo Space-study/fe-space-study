@@ -13,22 +13,22 @@ export function AuthProvider({children}: AuthProviderProps) {
   const {tokens, isAuthenticated} = useUser()
 
   useEffect(() => {
-    const publicRoute = [
-      '/auth/login',
-      '/auth/register',
-      '/auth/confirm-email',
-      '/auth/forgot-password/confirm',
-      '/auth/forgot-password/reset',
-      '/',
-      '/blog',
-    ]
-    const _token = localStorage.getItem('authToken')
+    // const publicRoute = [
+    //   '/auth/login',
+    //   '/auth/register',
+    //   '/auth/confirm-email',
+    //   '/auth/forgot-password/confirm',
+    //   '/auth/forgot-password/reset',
+    //   '/',
+    //   '/blog',
+    // ]
+    // const _token = localStorage.getItem('authToken')
 
-    if (!_token) {
-      if (!publicRoute.includes(pathname)) {
-        router.push('/auth/login')
-      }
-    }
+    // if (!_token) {
+    //   if (!publicRoute.includes(pathname)) {
+    //     router.push('/auth/login')
+    //   }
+    // }
   }, [router, pathname, tokens, isAuthenticated])
 
   return <>{children}</>
