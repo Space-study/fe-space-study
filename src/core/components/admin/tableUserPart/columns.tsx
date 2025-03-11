@@ -1,7 +1,7 @@
 'use client'
 
 import {Checkbox} from '@src/core/components/ui/checkbox'
-import {UserType} from '@src/core/services/user/user-service'
+import {UserType} from '@src/core/services/admin/user/user-service'
 import {ColumnDef} from '@tanstack/react-table'
 import {ShieldBan, ShieldCheck} from 'lucide-react'
 import {DataTableColumnHeader} from './tableColumnHeader'

@@ -22,8 +22,8 @@ import {
 } from '@src/core/components/ui/select'
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
+import {userService, UserType} from '@src/core/services/admin/user/user-service'
 import {uploadPhoto} from '@src/core/services/fileUpload/fileUpload-service'
-import {userService, UserType} from '@src/core/services/user/user-service'
 import {useEffect, useRef, useState} from 'react'
 
 const roles = ['Admin', 'User']

@@ -1,7 +1,7 @@
 'use client'
 
 import {columns} from '@src/core/components/admin/tableUserPart/columns'
-import {UserType, userService} from '@src/core/services/user/user-service'
+import {UserType, userService} from '@src/core/services/admin/user/user-service'
 import {useEffect, useState} from 'react'
 import {TableUi} from './tableUi'
 
