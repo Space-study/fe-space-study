@@ -1,48 +1,42 @@
-import MeetingsPage from '@src/core/pages/customer/MeetPageClient'
+"use client"
 
-const sampleData = [
-  {
-    image: 'https://www.dragosroua.com/wp-content/uploads/2019/03/coffee-shop-1149155_1920.jpg',
-    alt: 'Meeting 1',
-    title: 'Team Sync',
-    category: 'Work',
-    status: 'Online',
-    count: 154,
-  },
-  {
-    image: 'https://www.dragosroua.com/wp-content/uploads/2019/03/coffee-shop-1149155_1920.jpg',
-    alt: 'Meeting 2',
-    title: 'Study Group',
-    category: 'Education',
-    status: 'Active',
-    count: 85,
-  },
-  {
-    image: 'https://www.dragosroua.com/wp-content/uploads/2019/03/coffee-shop-1149155_1920.jpg',
-    alt: 'Meeting 3',
-    title: 'Remote Collaboration',
-    category: 'Remote Work',
-    status: 'Online',
-    count: 230,
-  },
-  {
-    image: 'https://www.dragosroua.com/wp-content/uploads/2019/03/coffee-shop-1149155_1920.jpg',
-    alt: 'Meeting 2',
-    title: 'Study Group',
-    category: 'Education',
-    status: 'Active',
-    count: 85,
-  },
-  {
-    image: 'https://www.dragosroua.com/wp-content/uploads/2019/03/coffee-shop-1149155_1920.jpg',
-    alt: 'Meeting 3',
-    title: 'Remote Collaboration',
-    category: 'Remote Work',
-    status: 'Online',
-    count: 230,
-  },
-]
+import { useEffect, useState } from 'react';
+import MeetingsPage from '@src/core/pages/customer/MeetPageClient';
+import { roomService } from '@/core/services/user/list-room-service';
+
+interface MeetingData {
+  image: string;
+  alt: string;
+  title: string;
+  category: string;
+  status: string;
+  count: number;
+}
 
 export default function CustomerPage() {
-  return <MeetingsPage data={sampleData} />
+  const [rooms, setRooms] = useState<MeetingData[]>([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const data = await roomService.getAllRooms();
+        console.log("data", data)
+        const formattedData: MeetingData[] = data.map(room => ({
+          image: room.imageUrl || '/default.jpg',
+          alt: room.name,
+          title: room.name,
+          category: room.category || 'General',
+          status: room.status,
+          count: room.maxMembers,
+        }));
+        setRooms(formattedData);
+      } catch (error) {
+        console.error('Failed to fetch rooms:', error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  return <MeetingsPage data={rooms} />;
 }
