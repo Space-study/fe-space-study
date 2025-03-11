@@ -1,11 +1,7 @@
-'use client'
-import {useUser} from '@src/app/shared/UserProvider'
 import {LayoutGrid, Mail, Sparkles} from 'lucide-react'
 import Link from 'next/link'
 
 export function Sidebar() {
-  const {user} = useUser()
-
   const navItems = [
     {
       title: 'All spaces',
@@ -17,21 +13,18 @@ export function Sidebar() {
       icon: <Mail className='h-5 w-5' />,
       href: '/blog',
     },
-  ]
-
-  if (user) {
-    navItems.push({
-      title: 'New Blog',
+    {
+      title: 'New Tools',
       icon: <Sparkles className='h-5 w-5' />,
-      href: '/blog/new',
-    })
-  }
+      href: '/tools',
+    },
+  ]
 
   return (
     <aside className='fixed left-0 top-0 h-screen w-[240px] border-r bg-white p-4'>
       <div className='mb-8'>
         <Link href='/' className='flex items-center space-x-2'>
-          <span className='text-xl font-bold'>FocusHub</span>
+          <span className='text-xl font-bold'>LifeAt</span>
         </Link>
       </div>
 

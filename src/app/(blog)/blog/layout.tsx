@@ -1,4 +1,3 @@
-'use client'
 import {Sidebar} from '@/core/components/blog/sidebar'
 import type React from 'react'
 
