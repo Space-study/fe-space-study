@@ -10,7 +10,7 @@ export function Sidebar() {
     {
       title: 'All spaces',
       icon: <LayoutGrid className='h-5 w-5' />,
-      href: '/spaces',
+      href: '/meetings',
     },
     {
       title: 'Newsletter',

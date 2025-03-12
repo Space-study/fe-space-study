@@ -21,10 +21,9 @@ export default function BlogPostForm() {
     thumbnail_path: File | null
     author_id: number
   }
-
   const {user} = useUser()
   const router = useRouter()
-  const {control, handleSubmit, setValue} = useForm<Blog>({
+  const {control, handleSubmit, setValue} = useForm({
     defaultValues: {
       title: '',
       category_id: 0,

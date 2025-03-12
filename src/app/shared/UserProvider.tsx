@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useState} from 'react'
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react'
 
 interface UserRole {
   id: number
@@ -41,6 +41,7 @@ interface UserContextType {
   }) => void
   logout: () => void
   isAuthenticated: () => boolean
+  updateUser: (updatedUser: User) => void // Function to update user details
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -49,14 +50,12 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(null)
   const [tokens, setTokens] = useState<AuthTokens | null>(null)
 
-  // Secure login method
   const login = (loginResponse: {
     user: User
     token: string
     refreshToken: string
     tokenExpires: number
   }) => {
-    // Only store in memory, not in persistent storage
     setUser(loginResponse.user)
     setTokens({
       token: loginResponse.token,
@@ -64,6 +63,10 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({children}) => {
       tokenExpires: loginResponse.tokenExpires,
     })
   }
+
+  useEffect(() => {
+    console.log(user)
+  }, [user])
 
   const logout = () => {
     setUser(null)
@@ -75,6 +78,10 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({children}) => {
     return Date.now() < tokens.tokenExpires
   }
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser)
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -83,6 +90,7 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({children}) => {
         login,
         logout,
         isAuthenticated,
+        updateUser,
       }}>
       {children}
     </UserContext.Provider>
