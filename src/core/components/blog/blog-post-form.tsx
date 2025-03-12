@@ -1,20 +1,19 @@
 'use client'
 
-import { useUser } from '@src/app/shared/UserProvider'
+import {useUser} from '@src/app/shared/UserProvider'
 import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { ImageUpload } from './image-upload'
-import { TiptapEditor } from './tiptap-editor'
+import {useRouter} from 'next/navigation'
+import {useEffect, useState} from 'react'
+import {Controller, useForm} from 'react-hook-form'
+import {Button} from '../ui/button'
+import {Card, CardContent} from '../ui/card'
+import {Input} from '../ui/input'
+import {Label} from '../ui/label'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../ui/select'
+import {ImageUpload} from './image-upload'
+import {TiptapEditor} from './tiptap-editor'
 
 export default function BlogPostForm() {
-
   type Blog = {
     title: string
     category_id: number
@@ -22,9 +21,9 @@ export default function BlogPostForm() {
     thumbnail_path: File | null
     author_id: number
   }
-  const { user } = useUser()
+  const {user} = useUser()
   const router = useRouter()
-  const { control, handleSubmit, setValue } = useForm({
+  const {control, handleSubmit, setValue} = useForm({
     defaultValues: {
       title: '',
       category_id: 0,
@@ -74,7 +73,7 @@ export default function BlogPostForm() {
             <Controller
               name='title'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <Input id='title' placeholder='Enter blog post title' {...field} required />
               )}
             />
@@ -85,7 +84,7 @@ export default function BlogPostForm() {
             <Controller
               name='thumbnail_path'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <ImageUpload
                   onImageChange={file => {
                     field.onChange(file)
@@ -107,7 +106,7 @@ export default function BlogPostForm() {
             <Controller
               name='content'
               control={control}
-              render={({ field }) => <TiptapEditor content={field.value} onChange={field.onChange} />}
+              render={({field}) => <TiptapEditor content={field.value} onChange={field.onChange} />}
             />
           </div>
 
@@ -116,7 +115,7 @@ export default function BlogPostForm() {
             <Controller
               name='category_id'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   value={field.value.toString()} // Convert number to string for Select
                   onValueChange={value => field.onChange(parseInt(value))} // Convert string back to number
