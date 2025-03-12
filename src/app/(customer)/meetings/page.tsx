@@ -1,26 +1,26 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from 'react';
-import MeetingsPage from '@src/core/pages/customer/MeetPageClient';
-import { roomService } from '@/core/services/user/list-room-service';
+import {roomService} from '@/core/services/user/list-room-service'
+import MeetingsPage from '@src/core/pages/customer/MeetPageClient'
+import {useEffect, useState} from 'react'
 
 interface MeetingData {
-  image: string;
-  alt: string;
-  title: string;
-  category: string;
-  status: string;
-  count: number;
+  image: string
+  alt: string
+  title: string
+  category: string
+  status: string
+  count: number
 }
 
 export default function CustomerPage() {
-  const [rooms, setRooms] = useState<MeetingData[]>([]);
+  const [rooms, setRooms] = useState<MeetingData[]>([])
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const data = await roomService.getAllRooms();
-        console.log("data", data)
+        const data = await roomService.getAllRooms()
+        console.log('data', data)
         const formattedData: MeetingData[] = data.map(room => ({
           image: room.imageUrl || '/default.jpg',
           alt: room.name,
@@ -28,15 +28,15 @@ export default function CustomerPage() {
           category: room.category || 'General',
           status: room.status,
           count: room.maxMembers,
-        }));
-        setRooms(formattedData);
+        }))
+        setRooms(formattedData)
       } catch (error) {
-        console.error('Failed to fetch rooms:', error);
+        console.error('Failed to fetch rooms:', error)
       }
-    };
+    }
 
-    fetchRooms();
-  }, []);
+    fetchRooms()
+  }, [])
 
-  return <MeetingsPage data={rooms} />;
+  return <MeetingsPage data={rooms} />
 }
