@@ -17,10 +17,10 @@ const Header = () => {
   useEffect(() => {
     const controller = new AbortController()
     const signal = controller.signal
+    const token = localStorage.getItem('authToken')
 
     async function onProfileFetch() {
       try {
-        const token = localStorage.getItem('authToken')
         if (!token) return
 
         const response = await fetch(apiPath('api/v1/auth/me'), {
