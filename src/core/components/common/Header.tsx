@@ -1,50 +1,32 @@
 'use client'
 
+import {ProfileService} from '@/core/services/auth/auth'
 import {useUser} from '@src/app/shared/UserProvider'
 import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
 import {Button} from '@src/core/components/ui/button'
-import {apiPath} from '@src/core/utils/api'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {useEffect, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
+import {toast} from 'sonner'
 
 const Header = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const [_user, setUser] = useState<{username: string; role: string; avatar: string} | null>(null)
+  const [_user, setUser] = useState<{lastName: string; photo: {path: string}} | null>(null)
   const {user, logout} = useUser()
+  const profileService = useMemo(() => new ProfileService(), [])
 
   useEffect(() => {
-    const controller = new AbortController()
-    const signal = controller.signal
-
-    async function onProfileFetch() {
+    const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('authToken')
-        if (!token) return
-
-        const response = await fetch(apiPath('api/v1/auth/me'), {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          signal,
-        })
-
-        if (!response.ok) throw new Error('Failed to fetch profile')
-
-        const result = await response.json()
-        setUser(result)
+        const data = await profileService.getProfile()
+        setUser(data)
       } catch (error) {
-        console.error('Error fetching profile:', error)
+        toast.error('Failed to load profile' + error)
       }
     }
-
-    onProfileFetch()
-
-    return () => controller.abort() // Cleanup request on unmount
-  }, [])
+    fetchProfile()
+  }, [profileService])
 
   const handleLogout = () => {
     const confirm = window.confirm('Are you sure you want to logout?')
@@ -93,9 +75,13 @@ const Header = () => {
           {user ? (
             <div className='flex items-center gap-3'>
               <Avatar>
-                <AvatarImage src={_user?.avatar || '/default-avatar.png'} />
-                <AvatarFallback>{_user?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={_user?.photo?.path || '/default-avatar.png'} />
+                <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
               </Avatar>
+              <div className='grid flex-1 text-left text-sm leading-tight'>
+                <span className='truncate font-semibold'>{user?.lastName || 'Guest'}</span>
+                <span className='truncate text-xs'>{user?.email || 'guest@example.com'}</span>
+              </div>
               <Button variant='ghost' className='hover:text-red-500' onClick={handleLogout}>
                 Logout
               </Button>
