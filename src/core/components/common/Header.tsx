@@ -11,7 +11,8 @@ import {useEffect, useState} from 'react'
 const Header = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const [_user, setUser] = useState<{username: string; role: string; avatar: string} | null>(null)
+
+  const [userData, setUserData] = useState<{ username: string; role: string; avatar: string } | null>(null)
   const {user, logout} = useUser()
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const Header = () => {
         if (!response.ok) throw new Error('Failed to fetch profile')
 
         const result = await response.json()
-        setUser(result)
+        setUserData(result)
       } catch (error) {
         console.error('Error fetching profile:', error)
       }
@@ -47,13 +48,11 @@ const Header = () => {
   }, [])
 
   const handleLogout = () => {
-    const confirm = window.confirm('Are you sure you want to logout?')
-    if (confirm) {
+    const confirmLogout = window.confirm('Are you sure you want to logout?')
+    if (confirmLogout) {
       localStorage.removeItem('authToken')
       document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
       logout()
-    } else {
-      return
     }
   }
 
@@ -67,8 +66,7 @@ const Header = () => {
   ]
 
   return (
-    <header
-      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
+    <header className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
       <div className='container mx-auto flex items-center justify-between py-4 px-6'>
         {/* Logo */}
         <Link href='/' className='text-2xl font-bold text-gray-900'>
@@ -93,8 +91,8 @@ const Header = () => {
           {user ? (
             <div className='flex items-center gap-3'>
               <Avatar>
-                <AvatarImage src={_user?.avatar || '/default-avatar.png'} />
-                <AvatarFallback>{_user?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={userData?.avatar || '/default-avatar.png'} />
+                <AvatarFallback>{userData?.username?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <Button variant='ghost' className='hover:text-red-500' onClick={handleLogout}>
                 Logout

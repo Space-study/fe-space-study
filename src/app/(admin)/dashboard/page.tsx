@@ -1,7 +1,9 @@
+'use client'
+
 import BarChartMultiple from '@src/core/components/admin/barChartMulti'
 import StaticsCard from '@src/core/components/admin/card'
 import PieChartDonut from '@src/core/components/admin/pieChart'
-import DataTable from '@src/core/components/admin/tableUser'
+import DataTable from '@src/core/components/admin/tableUserPart/dataTable'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,7 +15,7 @@ import {
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
 
-export default function dashboard() {
+export default function Dashboard() {
   return (
     <SidebarInset>
       <header className='flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
@@ -42,7 +44,7 @@ export default function dashboard() {
           <BarChartMultiple />
           <PieChartDonut />
         </div>
-        <div className='min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min'>
+        <div className='flex-1 h-full rounded-xl bg-muted/50'>
           <DataTable />
         </div>
       </div>

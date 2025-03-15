@@ -1,13 +1,13 @@
-import BackgoundItem from '@/core/components/customer/room/tools/Background/BackgroundItem'
-import {setBackground} from '@/core/redux/slices/backgroundSlice'
-import {backgroundService} from '@/core/services/room/background-service'
-import Image from 'next/image'
-import React, {useEffect, useState} from 'react'
-import toast from 'react-hot-toast'
-import {useDispatch} from 'react-redux'
+import BackgoundItem from '@/core/components/customer/room/tools/Background/BackgroundItem';
+import { setBackground } from '@/core/redux/slices/backgroundSlice';
+import { backgroundService } from '@/core/services/room/background-service';
+import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
 interface BackgoundListProps {
-  onCloseModal?: () => void
+  onCloseModal?: () => void;
 }
 
 interface Background {
@@ -66,15 +66,15 @@ const BackgoundList: React.FC<BackgoundListProps> = ({onCloseModal}) => {
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        toast.error('Please select an image file.')
-        return
+        toast.error('Please select an image file.');
+        return;
       }
       handleAddBackground(file)
     }
-  }
+  };
 
   const handleSelectBackground = (name: string, image: string) => {
     dispatch(setBackground(image))
@@ -107,23 +107,23 @@ const BackgoundList: React.FC<BackgoundListProps> = ({onCloseModal}) => {
           onDeleteBackground={() => handleDeleteBackground(bg.background_id)}
         />
       ))}
-      <li className='cursor-pointer m-2 text-center transition-all duration-500 ease-in-out rounded-sm border'>
-        <label className='cursor-pointer relative top-1'>
-          <div className='relative h-[7rem] w-[12rem] p-1'>
+      <li className="cursor-pointer m-2 text-center transition-all duration-500 ease-in-out rounded-sm border">
+        <label className="cursor-pointer relative top-1">
+          <div className="relative h-[7rem] w-[12rem] p-1">
             <Image
-              src='/default.jpg'
-              alt='Add image'
-              layout='fill'
-              objectFit='cover'
-              style={{borderRadius: '0.5rem'}}
+              src="/default.jpg"
+              alt="Add image"
+              layout="fill"
+              objectFit="cover"
+              style={{ borderRadius: '0.5rem' }}
             />
           </div>
-          <p className='text-sm pb-3 text-white'>Add image</p>
-          <input type='file' accept='image/*' className='hidden' onChange={handleFileChange} />
+          <p className="text-sm pb-3 text-white">Add image</p>
+          <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </label>
       </li>
     </ul>
-  )
-}
+  );
+};
 
-export default BackgoundList
+export default BackgoundList;
