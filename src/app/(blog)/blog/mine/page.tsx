@@ -2,6 +2,7 @@
 
 import {BlogCard} from '@/core/components/blog/blog-card'
 import {CategoryNav} from '@/core/components/blog/category-nav'
+import {useUser} from '@src/app/shared/UserProvider'
 import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
 import {useEffect, useState} from 'react'
 
@@ -13,14 +14,16 @@ export default function Page() {
   //   thumbnail_path: string;
   //   blog_id: number;
   // }
+  const {user} = useUser()
 
   type Blog = {
     title: string
     category: string
+    author_id: number
     thumbnail_path: string
     blog_id: number
-    lastname: string
     firstname: string
+    lastname: string
   }
 
   const [blogs, setBlogs] = useState<Blog[]>([])
@@ -29,21 +32,22 @@ export default function Page() {
     const fetchBlogs = async () => {
       try {
         const response = await axiosInstance.get<Blog[]>('api/v1/blogs')
-        setBlogs(response.data)
-        console.log('Blogs:', response)
+        const userBlogs = response.data.filter(blog => blog.author_id === user?.id)
+        console.log('User:', userBlogs)
+        setBlogs(userBlogs)
       } catch (error) {
         console.log('Error fetching blogs:', error)
       }
     }
 
     fetchBlogs()
-  }, [])
+  }, [user?.id])
 
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='bg-white shadow-sm sticky top-0 z-10'>
         <div className='px-4 py-8'>
-          <h1 className='text-3xl font-bold text-center mb-6'>LATEST BLOGS</h1>
+          <h1 className='text-3xl font-bold text-center mb-6'>MY BLOGS</h1>
           <CategoryNav />
         </div>
       </header>

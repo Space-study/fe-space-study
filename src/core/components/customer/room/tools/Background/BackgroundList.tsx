@@ -11,34 +11,34 @@ interface BackgoundListProps {
 }
 
 interface Background {
-  background_id?: number;
-  name: string;
-  image: string;
-  isCustom: boolean;
+  background_id?: number
+  name: string
+  image: string
+  isCustom: boolean
 }
 
-const BackgoundList: React.FC<BackgoundListProps> = ({ onCloseModal }) => {
-  const [backgroundListData, setBackgroundListData] = useState<Background[]>([]);
-  const dispatch = useDispatch();
+const BackgoundList: React.FC<BackgoundListProps> = ({onCloseModal}) => {
+  const [backgroundListData, setBackgroundListData] = useState<Background[]>([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const loadBackgrounds = async () => {
       try {
-        const backgrounds = await backgroundService.getAllBackgrounds();
+        const backgrounds = await backgroundService.getAllBackgrounds()
         const mappedBackgrounds = backgrounds.map(bg => ({
           background_id: bg.background_id,
           name: bg.title,
           image: bg.thumbnail_path,
           isCustom: false, // Adjust based on your API logic
-        }));
-        setBackgroundListData(mappedBackgrounds);
+        }))
+        setBackgroundListData(mappedBackgrounds)
       } catch (error) {
-        toast.error('Failed to load backgrounds');
-        console.error(error);
+        toast.error('Failed to load backgrounds')
+        console.error(error)
       }
-    };
-    loadBackgrounds();
-  }, []);
+    }
+    loadBackgrounds()
+  }, [])
 
   const handleAddBackground = async (file: File) => {
     try {
@@ -48,7 +48,7 @@ const BackgoundList: React.FC<BackgoundListProps> = ({ onCloseModal }) => {
         description: 'Custom background',
         // category_id: 1, // Uncomment and set if needed
         // user_create_id will need to come from auth context if required
-      });
+      })
       setBackgroundListData([
         ...backgroundListData,
         {
@@ -57,13 +57,13 @@ const BackgoundList: React.FC<BackgoundListProps> = ({ onCloseModal }) => {
           image: newBackground.thumbnail_path,
           isCustom: true,
         },
-      ]);
-      toast.success('Added background successfully!');
+      ])
+      toast.success('Added background successfully!')
     } catch (error) {
-      toast.error('Failed to add background');
-      console.error(error);
+      toast.error('Failed to add background')
+      console.error(error)
     }
-  };
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -72,30 +72,30 @@ const BackgoundList: React.FC<BackgoundListProps> = ({ onCloseModal }) => {
         toast.error('Please select an image file.');
         return;
       }
-      handleAddBackground(file);
+      handleAddBackground(file)
     }
   };
 
   const handleSelectBackground = (name: string, image: string) => {
-    dispatch(setBackground(image));
-    toast.success(`Selected ${name} as background!`);
-    if (onCloseModal) onCloseModal();
-  };
+    dispatch(setBackground(image))
+    toast.success(`Selected ${name} as background!`)
+    if (onCloseModal) onCloseModal()
+  }
 
   const handleDeleteBackground = async (backgroundId: number | undefined) => {
-    if (!backgroundId) return;
+    if (!backgroundId) return
     try {
-      await backgroundService.deleteBackground(backgroundId);
-      setBackgroundListData(backgroundListData.filter(bg => bg.background_id !== backgroundId));
-      toast.success('Deleted background successfully!');
+      await backgroundService.deleteBackground(backgroundId)
+      setBackgroundListData(backgroundListData.filter(bg => bg.background_id !== backgroundId))
+      toast.success('Deleted background successfully!')
     } catch (error) {
-      toast.error('Failed to delete background');
-      console.error(error);
+      toast.error('Failed to delete background')
+      console.error(error)
     }
-  };
+  }
 
   return (
-    <ul className="flex gap-2 flex-wrap overflow-y-auto max-h-[75vh] scroll-smooth items-center justify-center mt-6">
+    <ul className='flex gap-2 flex-wrap overflow-y-auto max-h-[75vh] scroll-smooth items-center justify-center mt-6'>
       {backgroundListData.map(bg => (
         <BackgoundItem
           key={bg.background_id || bg.name}

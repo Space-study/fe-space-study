@@ -20,6 +20,7 @@ const BackgoundItem: React.FC<BackgoundItemProps> = ({
   const [isSelected, setIsSelected] = useState(false);
 
   const handleClick = () => {
+
     onSelectBackground(name, image);
     setIsSelected(true);
   };
@@ -36,20 +37,19 @@ const BackgoundItem: React.FC<BackgoundItemProps> = ({
           ? 'border-blue-900 bg-blue-500 shadow-lg'
           : 'border-slate-100 border-2 hover:shadow-3xl'
       }`}
-      onClick={handleClick}
-    >
+      onClick={handleClick}>
       {/* Image Wrapper for Consistent Sizing */}
-      <div className="w-[192px] h-[112px] relative overflow-hidden rounded-md">
+      <div className='w-[192px] h-[112px] relative overflow-hidden rounded-md'>
         <Image
           src={image}
           alt={name}
-          layout="fill" // Ensures image fills the wrapper
-          objectFit="cover" // Keeps aspect ratio while covering the area
-          objectPosition="center" // Centers image
-          className="rounded-md"
+          layout='fill' // Ensures image fills the wrapper
+          objectFit='cover' // Keeps aspect ratio while covering the area
+          objectPosition='center' // Centers image
+          className='rounded-md'
         />
       </div>
-      <p className="text-l pb-1 text-white">{name}</p>
+      <p className='text-l pb-1 text-white'>{name}</p>
       {isCustom && (
         <button
           className="bg-red-500 text-white rounded-full px-2 py-1 text-xs absolute top-1 right-1"

@@ -1,8 +1,9 @@
-'use client';
-import { useEffect, useState } from 'react';
-import SoundItem from './SoundItem';
-import { musicService } from '@src/core/services/room/music-service';
-import type { Music } from '@src/core/services/room/music-service';
+'use client'
+import type {Music} from '@src/core/services/room/music-service'
+import {musicService} from '@src/core/services/room/music-service'
+import {useEffect, useState} from 'react'
+import SoundItem from './SoundItem'
+
 
 type Sound = {
   id: string;
@@ -16,67 +17,66 @@ type VolumeSettingsProps = {
   minimized: boolean;
 };
 
-export default function VolumeSettings({ minimized }: VolumeSettingsProps) {
-  const [sounds, setSounds] = useState<Sound[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function VolumeSettings({minimized}: VolumeSettingsProps) {
+  const [sounds, setSounds] = useState<Sound[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true;
-  
+    let mounted = true
+
     const fetchSounds = async () => {
       try {
-        setLoading(true);
-        const musicTracks = await musicService.getAllMusic();
-  
+        setLoading(true)
+        const musicTracks = await musicService.getAllMusic()
+
         const initialSounds: Sound[] = musicTracks.map((track: Music) => ({
           id: track.id.toString(),
           name: track.title,
           volume: 0.5,
           muted: false,
           audio: new Audio(track.path),
-        }));
-  
+        }))
+
         initialSounds.forEach(sound => {
-          sound.audio.loop = true;
-          sound.audio.volume = sound.volume;
-        });
-  
+          sound.audio.loop = true
+          sound.audio.volume = sound.volume
+        })
+
         if (mounted) {
-          setSounds(initialSounds);
+          setSounds(initialSounds)
         }
       } catch (err) {
         if (mounted) {
-          setError((err as Error).message || 'Failed to load sounds');
+          setError((err as Error).message || 'Failed to load sounds')
         }
       } finally {
         if (mounted) {
-          setLoading(false);
+          setLoading(false)
         }
       }
-    };
-  
-    fetchSounds();
-  
+    }
+
+    fetchSounds()
+
     const playSoundsOnClick = () => {
       sounds.forEach(sound => {
-        sound.audio.play().catch(() => {});
-      });
-    };
-  
-    document.addEventListener('click', playSoundsOnClick, { once: true });
-  
+        sound.audio.play().catch(() => {})
+      })
+    }
+
+    document.addEventListener('click', playSoundsOnClick, {once: true})
+
     return () => {
-      mounted = false;
+      mounted = false
       sounds.forEach(sound => {
-        sound.audio.pause();
-        sound.audio.currentTime = 0;
-      });
-  
-      document.removeEventListener('click', playSoundsOnClick);
-    };
-  }, [musicService]);
-  
+        sound.audio.pause()
+        sound.audio.currentTime = 0
+      })
+
+      document.removeEventListener('click', playSoundsOnClick)
+    }
+  }, [musicService])
 
   const handleToggleMute = (soundId: string) => {
     setSounds(prevSounds =>
@@ -87,7 +87,7 @@ export default function VolumeSettings({ minimized }: VolumeSettingsProps) {
           if (newMuted) {
             sound.audio.pause();
           } else {
-            sound.audio.play().catch(err => console.error(`Failed to play ${sound.name}:`, err));
+            sound.audio.play().catch(err => console.error(`Failed to play ${sound.name}:`, err))
           }
           return { ...sound, muted: newMuted };
         }
@@ -104,9 +104,9 @@ export default function VolumeSettings({ minimized }: VolumeSettingsProps) {
           const newMuted = newVolume === 0;
           sound.audio.muted = newMuted;
           if (newMuted) {
-            sound.audio.pause();
+            sound.audio.pause()
           } else {
-            sound.audio.play().catch(err => console.error(`Failed to play ${sound.name}:`, err));
+            sound.audio.play().catch(err => console.error(`Failed to play ${sound.name}:`, err))
           }
           return { ...sound, volume: newVolume, muted: newMuted };
         }
@@ -115,9 +115,9 @@ export default function VolumeSettings({ minimized }: VolumeSettingsProps) {
     );
   };
 
-  if (minimized) return null;
-  if (loading) return <div className="text-white">Loading sounds...</div>;
-  if (error) return <div className="text-white">Error: {error}</div>;
+  if (minimized) return null
+  if (loading) return <div className='text-white'>Loading sounds...</div>
+  if (error) return <div className='text-white'>Error: {error}</div>
 
   return (
     <div className="space-y-4 px-5 overflow-y-auto h-[30vh]">
