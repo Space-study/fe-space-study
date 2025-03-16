@@ -1,10 +1,10 @@
 'use client'
-import { useUser } from '@src/app/shared/UserProvider'
-import { LayoutGrid, Mail, Sparkles } from 'lucide-react'
+import {useUser} from '@src/app/shared/UserProvider'
+import {LayoutGrid, Mail, Sparkles} from 'lucide-react'
 import Link from 'next/link'
 
 export function Sidebar() {
-  const { user } = useUser()
+  const {user} = useUser()
 
   const navItems = [
     {
@@ -20,7 +20,6 @@ export function Sidebar() {
   ]
 
   if (user) {
-
     navItems.push({
       title: 'My Blogs',
       icon: <Sparkles className='h-5 w-5' />,
@@ -31,7 +30,6 @@ export function Sidebar() {
       title: 'New Blog',
       icon: <Sparkles className='h-5 w-5' />,
       href: '/blog/new',
-
     })
   }
 

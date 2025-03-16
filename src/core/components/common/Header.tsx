@@ -29,13 +29,11 @@ const Header = () => {
   }, [profileService])
 
   const handleLogout = () => {
-    const confirm = window.confirm('Are you sure you want to logout?')
-    if (confirm) {
+    const confirmLogout = window.confirm('Are you sure you want to logout?')
+    if (confirmLogout) {
       localStorage.removeItem('authToken')
       document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
       logout()
-    } else {
-      return
     }
   }
 
@@ -49,8 +47,7 @@ const Header = () => {
   ]
 
   return (
-    <header
-      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
+    <header className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
       <div className='container mx-auto flex items-center justify-between py-4 px-6'>
         {/* Logo */}
         <Link href='/' className='text-2xl font-bold text-gray-900'>

@@ -1,20 +1,19 @@
 'use client'
 
-import { useUser } from '@src/app/shared/UserProvider'
+import {useUser} from '@src/app/shared/UserProvider'
 import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { ImageUpload } from './image-upload'
-import { TiptapEditor } from './tiptap-editor'
+import {useRouter} from 'next/navigation'
+import {useEffect, useState} from 'react'
+import {Controller, useForm} from 'react-hook-form'
+import {Button} from '../ui/button'
+import {Card, CardContent} from '../ui/card'
+import {Input} from '../ui/input'
+import {Label} from '../ui/label'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../ui/select'
+import {ImageUpload} from './image-upload'
+import {TiptapEditor} from './tiptap-editor'
 
 export default function BlogPostForm() {
-
   type Blog = {
     title: string
     category_id: number
@@ -22,9 +21,10 @@ export default function BlogPostForm() {
     thumbnail_path: File | null
     author_id: number
   }
-  const { user } = useUser()
+
+  const {user} = useUser()
   const router = useRouter()
-  const { control, handleSubmit, setValue } = useForm({
+  const {control, handleSubmit, setValue} = useForm<Blog>({
     defaultValues: {
       title: '',
       category_id: 0,
@@ -44,15 +44,20 @@ export default function BlogPostForm() {
     setIsSubmitting(true)
 
     try {
-      const payload = {
-        title: data.title,
-        category_id: Number(data.category_id), // Ensure it's a number
-        content: data.content,
-        thumbnail_path: '', // Handle this if it's a file
-        author_id: Number(data.author_id), // Ensure it's a number
+      const formData = new FormData()
+      formData.append('title', data.title)
+      formData.append('content', data.content)
+      formData.append('category_id', data.category_id.toString())
+      formData.append('author_id', data.author_id.toString())
+      if (data.thumbnail_path) {
+        formData.append('file', data.thumbnail_path) // Changed 'thumbnail_path' to 'file'
       }
 
-      const response = await axiosInstance.post('/api/v1/blogs', payload)
+      const response = await axiosInstance.post('/api/v1/blogs', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
 
       console.log('API Response:', response.data)
       alert('Blog post created successfully!')
@@ -74,7 +79,7 @@ export default function BlogPostForm() {
             <Controller
               name='title'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <Input id='title' placeholder='Enter blog post title' {...field} required />
               )}
             />
@@ -85,7 +90,7 @@ export default function BlogPostForm() {
             <Controller
               name='thumbnail_path'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <ImageUpload
                   onImageChange={file => {
                     field.onChange(file)
@@ -107,7 +112,7 @@ export default function BlogPostForm() {
             <Controller
               name='content'
               control={control}
-              render={({ field }) => <TiptapEditor content={field.value} onChange={field.onChange} />}
+              render={({field}) => <TiptapEditor content={field.value} onChange={field.onChange} />}
             />
           </div>
 
@@ -116,10 +121,10 @@ export default function BlogPostForm() {
             <Controller
               name='category_id'
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
-                  value={field.value.toString()} // Convert number to string for Select
-                  onValueChange={value => field.onChange(parseInt(value))} // Convert string back to number
+                  value={field.value.toString()}
+                  onValueChange={value => field.onChange(parseInt(value))}
                   required>
                   <SelectTrigger id='category'>
                     <SelectValue placeholder='Select a category' />

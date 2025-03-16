@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import MeetingCard from '@/core/components/customer/MeetingCard'
 
