@@ -1,6 +1,6 @@
 'use client'
 
-import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
+import {AuthService} from '@src/core/services/auth/auth-service'
 import {useRouter, useSearchParams} from 'next/navigation'
 import {Suspense, useEffect, useState} from 'react'
 
@@ -9,6 +9,7 @@ const ConfirmEmailComponent = () => {
   const searchParams = useSearchParams()
   const token = searchParams?.get('token') // Kiểm tra giá trị token
   const [status, setStatus] = useState('loading')
+  const authService = new AuthService()
 
   useEffect(() => {
     if (token) {
@@ -20,13 +21,8 @@ const ConfirmEmailComponent = () => {
 
   const verifyEmailToken = async (hash: string) => {
     try {
-      const response = await axiosInstance.post('api/v1/auth/email/confirm', {hash})
-
-      if (response) {
-        setStatus('success')
-      } else {
-        setStatus('error')
-      }
+      await authService.confirmEmailToken(hash)
+      setStatus('success')
     } catch (error) {
       console.error('Verification failed:', error)
       setStatus('error')

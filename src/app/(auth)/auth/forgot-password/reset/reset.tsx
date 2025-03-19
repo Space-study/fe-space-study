@@ -6,6 +6,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
+import {AuthService} from '@src/core/services/auth/auth-service'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter, useSearchParams} from 'next/navigation'
@@ -18,6 +19,7 @@ function ResetPasswordComponent() {
   const searchParams = useSearchParams()
   const token = searchParams?.get('token') // Get the token from the query params
   const [status, setStatus] = useState('loading')
+  const authService = new AuthService()
 
   useEffect(() => {
     if (token) {
@@ -29,25 +31,14 @@ function ResetPasswordComponent() {
 
   const verifyEmailToken = async (hash: string) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/auth/email/confirm-forgot-password`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({hash}),
-        },
-      )
-
-      if (response.ok) {
+      const response = await authService.verifyEmailResetPassword(hash)
+      if (response.status === 'success') {
         setStatus('success')
       } else {
         setStatus('error')
       }
     } catch (error) {
       console.error('Verification failed:', error)
-      setStatus('error')
     }
   }
 
@@ -65,23 +56,13 @@ function ResetPasswordComponent() {
         throw new Error('Token is missing.')
       }
 
-      const response = await fetch(`http://localhost:8000/api/v1/auth/reset/password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          password: data.password, // Include the new password
-          hash: token, // Include the token in the request
-        }),
-      })
+      const response = await authService.resetPassword({password: data.password, hash: token})
 
-      if (response.ok) {
+      if (response.status === 'success') {
         alert('Password has been reset successfully.')
-        router.push('/auth/login') // Redirect to login
+        router.push('/auth/login')
       } else {
-        const errorData = await response.json()
-        alert(errorData.message || 'Failed to reset password.')
+        alert('Failed to reset password.')
       }
     } catch (error) {
       console.error('Password reset failed:', error)

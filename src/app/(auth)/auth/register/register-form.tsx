@@ -41,7 +41,7 @@ export default function RegisterForm() {
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8000/api/v1/auth/google/login'
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/google/login`
   }
 
   useEffect(() => {

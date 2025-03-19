@@ -11,7 +11,7 @@ type AdaptAxiosRequestConfig = AxiosRequestConfig & InternalAxiosRequestConfig<a
 export const onRequest = (config: AdaptAxiosRequestConfig): AdaptAxiosRequestConfig => {
   const accessToken = typeof window === 'undefined' ? null : localStorage?.getItem('authToken')
   if (config.url?.includes('/auth/login')) {
-    delete config.headers.Authorization // Xóa header nếu có
+    delete config.headers.Authorization
   } else if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`
   }

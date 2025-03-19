@@ -3,7 +3,7 @@
 import {BlogCard} from '@/core/components/blog/blog-card'
 import {CategoryNav} from '@/core/components/blog/category-nav'
 import {useUser} from '@src/app/shared/UserProvider'
-import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
+import {BlogService} from '@src/core/services/blog/blog-service'
 import {useEffect, useState} from 'react'
 
 export default function Page() {
@@ -27,16 +27,16 @@ export default function Page() {
   }
 
   const [blogs, setBlogs] = useState<Blog[]>([])
+  const blogService = new BlogService()
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await axiosInstance.get<Blog[]>('api/v1/blogs')
-        const userBlogs = response.data.filter(blog => blog.author_id === user?.id)
-        console.log('User:', userBlogs)
+        const response = await blogService.getAllBlogs()
+        const userBlogs = response.data?.filter(blog => blog.author_id === user?.id) || []
         setBlogs(userBlogs)
       } catch (error) {
-        console.log('Error fetching blogs:', error)
+        console.error('Error fetching blogs:', error)
       }
     }
 

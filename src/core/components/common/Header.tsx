@@ -4,6 +4,7 @@ import {ProfileService} from '@/core/services/auth/auth'
 import {useUser} from '@src/app/shared/UserProvider'
 import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
 import {Button} from '@src/core/components/ui/button'
+import {AuthService} from '@src/core/services/auth/auth-service'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {useEffect, useMemo, useState} from 'react'
@@ -15,6 +16,7 @@ const Header = () => {
   const [_user, setUser] = useState<{lastName: string; photo: {path: string}} | null>(null)
   const {user, logout} = useUser()
   const profileService = useMemo(() => new ProfileService(), [])
+  const authService = new AuthService()
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,12 +30,16 @@ const Header = () => {
     fetchProfile()
   }, [profileService])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     const confirmLogout = window.confirm('Are you sure you want to logout?')
     if (confirmLogout) {
-      localStorage.removeItem('authToken')
-      document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
-      logout()
+      const response = await authService.logout()
+      if (response === undefined) {
+        localStorage.removeItem('authToken')
+        document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
+        logout()
+        window.location.reload()
+      }
     }
   }
 
@@ -47,7 +53,8 @@ const Header = () => {
   ]
 
   return (
-    <header className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
+    <header
+      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
       <div className='container mx-auto flex items-center justify-between py-4 px-6'>
         {/* Logo */}
         <Link href='/' className='text-2xl font-bold text-gray-900'>

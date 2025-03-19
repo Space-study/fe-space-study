@@ -7,7 +7,7 @@ import {Button} from '@src/core/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormMessage} from '@src/core/components/ui/form'
 import {Input} from '@src/core/components/ui/input'
 import {Separator} from '@src/core/components/ui/separator'
-import axiosInstance from '@src/lib/axiosInstance/axiosInstance'
+import {AuthService} from '@src/core/services/auth/auth-service'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
@@ -29,32 +29,34 @@ export default function LoginForm() {
     },
     mode: 'onTouched', // Validate on touch
   })
+  const authService = new AuthService()
 
   async function onSubmit(data: LoginData) {
     try {
-      const response = await axiosInstance.post('api/v1/auth/email/login', data)
-      if (response.status !== 200) {
+      const response = await authService.loginService(data)
+
+      const result = response
+
+      if (result.data) {
+        localStorage.setItem('authToken', result?.data.token)
+        document.cookie = `refreshToken=${result?.data.refreshToken}; path=/;`
+        if (result?.data.user) {
+          login({
+            user: result.data.user,
+            token: result.data.token,
+            refreshToken: result.data.refreshToken,
+            tokenExpires: result.data.tokenExpires,
+          })
+          if (result.data.user.role.name === 'Admin') {
+            router.push('/dashboard')
+          } else if (result.data.user.role.name === 'User') {
+            router.push('/')
+          }
+        }
+      } else {
         form.setError('root', {
           message: 'Login failed. Please check your credentials.',
         })
-        return
-      }
-
-      const result = response.data
-      localStorage.setItem('authToken', result?.token)
-      document.cookie = `refreshToken=${result?.refreshToken}; path=/;`
-      if (result?.user) {
-        login({
-          user: result.user,
-          token: result.token,
-          refreshToken: result.refreshToken,
-          tokenExpires: result.tokenExpires,
-        })
-        if (result.user.role.name === 'Admin') {
-          router.push('/dashboard')
-        } else if (result.user.role.name === 'User') {
-          router.push('/')
-        }
       }
     } catch (error) {
       console.error('Error during login:', error)
@@ -69,7 +71,7 @@ export default function LoginForm() {
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8000/api/v1/auth/google/login'
+    window.location.href = `${process.env.NEXT_PUBLIC_URL_API}/api/v1/auth/google/login  `
   }
 
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function LoginForm() {
     if (token) {
       document.cookie = `refreshToken=${token}; path=/;`
       localStorage.setItem('authToken', token)
-      window.location.href = 'http://localhost:3000/room'
+      window.location.href = `${process.env.NEXT_PUBLIC_URL_API}/room`
     }
   }, [])
 

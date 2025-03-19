@@ -1,5 +1,6 @@
 'use client'
 import {useUser} from '@src/app/shared/UserProvider'
+import {AuthService} from '@src/core/services/auth/auth-service'
 import {usePathname, useRouter} from 'next/navigation'
 import {ReactNode, useEffect} from 'react'
 
@@ -10,9 +11,23 @@ interface AuthProviderProps {
 export function AuthProvider({children}: AuthProviderProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const {tokens, isAuthenticated} = useUser()
+  const {tokens, isAuthenticated, user, updateUser} = useUser()
 
   useEffect(() => {
+    if (!user) {
+      const fetchUser = async () => {
+        try {
+          const authService = new AuthService()
+          const userData = await authService.getMe()
+          updateUser(userData)
+        } catch (err) {
+          console.log('Login to continue', err)
+        }
+      }
+
+      fetchUser()
+    }
+
     const publicRoute = [
       '/auth/login',
       '/auth/register',
@@ -21,12 +36,18 @@ export function AuthProvider({children}: AuthProviderProps) {
       '/auth/forgot-password/reset',
       '/',
       '/blog',
+      '/meetings',
     ]
-    const _token = localStorage.getItem('authToken')
 
-    if (!_token) {
+    if (!user) {
       if (!publicRoute.includes(pathname)) {
         router.push('/auth/login')
+      }
+    }
+
+    if (user) {
+      if (publicRoute.includes(pathname) && pathname !== '/blog') {
+        router.push('/')
       }
     }
   }, [router, pathname, tokens, isAuthenticated])
