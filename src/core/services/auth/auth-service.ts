@@ -134,9 +134,9 @@ export class AuthService {
   public async logout(): Promise<void> {
     try {
       const url = this.requestBuilder.buildUrl('logout')
-      await httpClient.post<void, 'logout'>({
+      await httpClient.post<void, object>({
         url,
-        body: 'logout',
+        body: {},
       })
     } catch (error) {
       console.error('Error logging out:', error)
