@@ -47,7 +47,7 @@ const Header = () => {
     {href: '/', label: 'Home'},
     {href: '/meetings', label: 'Meetings'},
     {href: '/room', label: 'Room'},
-    {href: '/example', label: 'Example Redux'},
+    // {href: '/example', label: 'Example Redux'},
     {href: '/blog', label: 'Blog'},
     {href: '/contact', label: 'Contact Us'},
   ]
