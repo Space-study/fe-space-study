@@ -1,5 +1,5 @@
-import {httpClient} from '@/core/utils/axios'
-import {IRequestBuilder, RequestBuilder} from '../../utils/axios/request-builder'
+import { httpClient } from '@/core/utils/axios'
+import { IRequestBuilder, RequestBuilder } from '../../utils/axios/request-builder'
 
 export interface Room {
   id: number
@@ -10,6 +10,7 @@ export interface Room {
   category: string
   status: string
   createdAt: string
+  invite_link?: string
 }
 
 export interface CreateRoomDto {
@@ -19,6 +20,18 @@ export interface CreateRoomDto {
   imageUrl?: string
   category?: string
 }
+
+export interface JoinRoomDto {
+  id: number,
+  userId: number,
+  inviteLink?: string
+}
+
+export interface JoinStateDto {
+  statusCode: number,
+  message: string
+}
+
 
 type UpdateRoomDto = Partial<CreateRoomDto>
 
@@ -65,6 +78,42 @@ export class RoomService {
       url: this.requestBuilder.buildUrl(String(id)),
     })
   }
+
+  public async joinRoom(data: JoinRoomDto): Promise<Room> {
+    try {
+      const response = await httpClient.post<Room, JoinRoomDto>({
+        url: this.requestBuilder.buildUrl(`${data.id}/join`),
+        body: data,
+      })
+
+      return response
+    } catch (error) {
+      console.error('Error joining room:', error)
+
+      // if (error.response?.status === 403) {
+      //   throw new Error('Invalid invite link or no permission to join')
+      // }
+
+      throw new Error('Failed to join room')
+    }
+  }
+
+  public async checkInviteLink(id: number, inviteLink: string): Promise<JoinStateDto> {
+    try {
+      const response = await httpClient.post<JoinStateDto, void>({
+        url: this.requestBuilder.buildUrl(`${id}/join?inviteLink=${encodeURIComponent(inviteLink)}`),
+        body: undefined
+      });
+    
+      console.log('Check Invite Link:', response);
+      return response;
+    } catch (error) {  
+      console.error('Error checking invite link:', error);
+      return { statusCode: 500, message: 'Failed to check invite link' };
+    }
+  }
+  
+  
 }
 
 export const roomService = new RoomService(requestBuilder)
