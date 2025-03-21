@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import {Badge} from '@/core/components/ui/badge'
+import {Button} from '@/core/components/ui/button'
+import {Card, CardContent, CardFooter} from '@/core/components/ui/card'
+import {roomService} from '@src/core/services/user/list-room-service'
+import {Heart, Link as LinkIcon} from 'lucide-react'
 import Image from 'next/image'
-import { Badge } from '@/core/components/ui/badge'
-import { Button } from '@/core/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/core/components/ui/card'
-import { Heart, Link as LinkIcon } from 'lucide-react'
-import { roomService } from '@src/core/services/user/list-room-service'
+import {useRouter} from 'next/navigation'
+import {useState} from 'react'
 
 interface CardProps {
   data: {
@@ -23,7 +23,7 @@ interface CardProps {
   }
 }
 
-const MeetingCard = ({ data }: CardProps) => {
+const MeetingCard = ({data}: CardProps) => {
   const [favorite, setFavorite] = useState<boolean>(false)
   const [copied, setCopied] = useState<boolean>(false)
 
@@ -60,9 +60,8 @@ const MeetingCard = ({ data }: CardProps) => {
   }
 
   const handleJoinRoom = async () => {
-
     try {
-      await roomService.joinRoom({ id: data.id, userId: 123, inviteLink: data.inviteLink })
+      await roomService.joinRoom({id: data.id, userId: 123, inviteLink: data.inviteLink})
       alert('Joined successfully!')
       router.push(`/room/${data.id}?inviteLink=${encodeURIComponent(data.inviteLink || '')}`)
     } catch (err) {
@@ -73,13 +72,25 @@ const MeetingCard = ({ data }: CardProps) => {
   }
 
   return (
-    <Card className='overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer' onClick={handleJoinRoom}>
+    <Card
+      className='overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer'
+      onClick={handleJoinRoom}>
       <div className='relative'>
         <div className='aspect-video overflow-hidden'>
-          <Image src={data.image || '/placeholder.svg'} alt={data.alt} width={400} height={225} className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105' />
+          <Image
+            src={data.image || '/placeholder.svg'}
+            alt={data.alt}
+            width={400}
+            height={225}
+            className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105'
+          />
         </div>
 
-        <Button variant='outline' size='icon' className="absolute top-2 right-2 h-8 w-8 rounded-full" onClick={handleFavoriteToggle}>
+        <Button
+          variant='outline'
+          size='icon'
+          className='absolute top-2 right-2 h-8 w-8 rounded-full'
+          onClick={handleFavoriteToggle}>
           <Heart className={`h-4 w-4 ${favorite ? 'fill-current text-red-500' : ''}`} />
         </Button>
 
@@ -89,7 +100,7 @@ const MeetingCard = ({ data }: CardProps) => {
       </div>
 
       <CardContent className='p-4'>
-        <Badge className="px-2.5 py-0.5">{data.category}</Badge>
+        <Badge className='px-2.5 py-0.5'>{data.category}</Badge>
         <div className='text-muted-foreground'>{data.status}</div>
       </CardContent>
 
@@ -97,10 +108,19 @@ const MeetingCard = ({ data }: CardProps) => {
         <div className='text-sm text-muted-foreground'>Max {data.count} members</div>
 
         {data.privacy === 'private' && data.inviteLink && (
-          <div className="flex items-center space-x-2 w-full">
-            <input type="text" value={shareLink} readOnly className="px-2 py-1 border rounded-md w-full text-sm bg-gray-100" />
-            <Button variant="outline" size="sm" onClick={copyToClipboard} className="flex items-center gap-1 text-sm">
-              <LinkIcon className="h-4 w-4" />
+          <div className='flex items-center space-x-2 w-full'>
+            <input
+              type='text'
+              value={shareLink}
+              readOnly
+              className='px-2 py-1 border rounded-md w-full text-sm bg-gray-100'
+            />
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={copyToClipboard}
+              className='flex items-center gap-1 text-sm'>
+              <LinkIcon className='h-4 w-4' />
               {copied ? 'Copied!' : 'Copy'}
             </Button>
           </div>

@@ -92,6 +92,10 @@ const data = {
           title: 'Limits',
           url: '#',
         },
+        {
+          title: 'Blog',
+          url: 'blog-admin',
+        },
       ],
     },
     {

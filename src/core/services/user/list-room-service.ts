@@ -1,5 +1,5 @@
-import { httpClient } from '@/core/utils/axios'
-import { IRequestBuilder, RequestBuilder } from '../../utils/axios/request-builder'
+import {httpClient} from '@/core/utils/axios'
+import {IRequestBuilder, RequestBuilder} from '../../utils/axios/request-builder'
 
 export interface Room {
   id: number
@@ -22,16 +22,15 @@ export interface CreateRoomDto {
 }
 
 export interface JoinRoomDto {
-  id: number,
-  userId: number,
+  id: number
+  userId: number
   inviteLink?: string
 }
 
 export interface JoinStateDto {
-  statusCode: number,
+  statusCode: number
   message: string
 }
-
 
 type UpdateRoomDto = Partial<CreateRoomDto>
 
@@ -101,19 +100,19 @@ export class RoomService {
   public async checkInviteLink(id: number, inviteLink: string): Promise<JoinStateDto> {
     try {
       const response = await httpClient.post<JoinStateDto, void>({
-        url: this.requestBuilder.buildUrl(`${id}/join?inviteLink=${encodeURIComponent(inviteLink)}`),
-        body: undefined
-      });
-    
-      console.log('Check Invite Link:', response);
-      return response;
-    } catch (error) {  
-      console.error('Error checking invite link:', error);
-      return { statusCode: 500, message: 'Failed to check invite link' };
+        url: this.requestBuilder.buildUrl(
+          `${id}/join?inviteLink=${encodeURIComponent(inviteLink)}`,
+        ),
+        body: undefined,
+      })
+
+      console.log('Check Invite Link:', response)
+      return response
+    } catch (error) {
+      console.error('Error checking invite link:', error)
+      return {statusCode: 500, message: 'Failed to check invite link'}
     }
   }
-  
-  
 }
 
 export const roomService = new RoomService(requestBuilder)

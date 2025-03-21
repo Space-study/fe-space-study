@@ -1,70 +1,70 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from 'react';
-import { packageService } from '@/core/services/user/package-service';
+import {packageService} from '@/core/services/user/package-service'
+import {useEffect, useState} from 'react'
 
 interface PackageData {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  duration: number;
-  status: 'OPEN' | 'LOCKED';
-  createdAt: string;
+  id: number
+  name: string
+  description: string
+  price: number
+  duration: number
+  status: 'OPEN' | 'LOCKED'
+  createdAt: string
 }
 
 export default function PackagePage() {
-  const [packages, setPackages] = useState<PackageData[]>([]);
-  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
+  const [packages, setPackages] = useState<PackageData[]>([])
+  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null)
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const data = await packageService.getAllPackages();
-        console.log("data", data);
-  
-        const openPackages = data.filter(pkg => Number(pkg.status) === 1 || pkg.status === 'OPEN');
-  
+        const data = await packageService.getAllPackages()
+        console.log('data', data)
+
+        const openPackages = data.filter(pkg => Number(pkg.status) === 1 || pkg.status === 'OPEN')
+
         const formattedData: PackageData[] = openPackages.map(pkg => ({
           id: pkg.package_id,
           name: pkg.name,
           description: pkg.description,
           price: pkg.price,
           duration: pkg.duration,
-          status: Number(pkg.status) === 1 ? 'OPEN' : 'LOCKED', 
+          status: Number(pkg.status) === 1 ? 'OPEN' : 'LOCKED',
           createdAt: pkg.created_at,
-        }));
-  
-        setPackages(formattedData);
+        }))
+
+        setPackages(formattedData)
       } catch (error) {
-        console.error('Failed to fetch packages:', error);
+        console.error('Failed to fetch packages:', error)
       }
-    };
-  
-    fetchPackages();
-  }, []);
-  
+    }
+
+    fetchPackages()
+  }, [])
 
   const handleSelectPackage = (pkg: PackageData) => {
-    setSelectedPackage(pkg);
-    alert(`You have selected package: ${pkg.name}`);
-  };
+    setSelectedPackage(pkg)
+    alert(`You have selected package: ${pkg.name}`)
+  }
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' }}>
+    <div style={{padding: '2rem', backgroundColor: '#f4f6f8', minHeight: '100vh'}}>
+      <h1 style={{textAlign: 'center', marginBottom: '2rem', fontSize: '2rem'}}>
         Available Packages
       </h1>
       {packages.length === 0 ? (
-        <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#555' }}>No packages available.</p>
+        <p style={{textAlign: 'center', fontSize: '1.2rem', color: '#555'}}>
+          No packages available.
+        </p>
       ) : (
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '1.5rem',
-          }}
-        >
+          }}>
           {packages.map(pkg => (
             <div
               key={pkg.id}
@@ -73,15 +73,14 @@ export default function PackagePage() {
                 borderRadius: '8px',
                 padding: '1.5rem',
                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              }}
-            >
-              <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.5rem' }}>{pkg.name}</h2>
-              <p style={{ color: '#555', marginBottom: '1rem' }}>{pkg.description}</p>
-              <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>
+              }}>
+              <h2 style={{margin: '0 0 0.5rem', fontSize: '1.5rem'}}>{pkg.name}</h2>
+              <p style={{color: '#555', marginBottom: '1rem'}}>{pkg.description}</p>
+              <div style={{marginBottom: '0.5rem', fontWeight: 500}}>
                 <span>Price: </span>
-                <span style={{ color: '#2d9cdb' }}>${pkg.price}</span>
+                <span style={{color: '#2d9cdb'}}>${pkg.price}</span>
               </div>
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div style={{marginBottom: '0.5rem'}}>
                 <strong>Duration:</strong> {pkg.duration} month(s)
               </div>
               {/* <div style={{ marginBottom: '0.5rem' }}>
@@ -100,8 +99,7 @@ export default function PackagePage() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                }}
-              >
+                }}>
                 Select Package
               </button>
             </div>
@@ -109,11 +107,19 @@ export default function PackagePage() {
         </div>
       )}
       {selectedPackage && (
-        <div style={{ marginTop: '2rem', textAlign: 'center', padding: '1rem', background: '#fff', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        <div
+          style={{
+            marginTop: '2rem',
+            textAlign: 'center',
+            padding: '1rem',
+            background: '#fff',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          }}>
           <h2>You have selected: {selectedPackage.name}</h2>
           <p>{selectedPackage.description}</p>
         </div>
       )}
     </div>
-  );
+  )
 }
