@@ -8,6 +8,7 @@ import {
   ScanEye,
   SquareTerminal,
   UserRoundPen,
+  Video,
 } from 'lucide-react'
 import * as React from 'react'
 
@@ -117,6 +118,21 @@ const data = {
         },
         {
           title: 'Limits',
+          url: '#',
+        },
+      ],
+    },
+    {
+      title: 'Room Management',
+      url: '#',
+      icon: Video,
+      items: [
+        {
+          title: 'Background',
+          url: 'backgrounds',
+        },
+        {
+          title: 'Music',
           url: '#',
         },
       ],
