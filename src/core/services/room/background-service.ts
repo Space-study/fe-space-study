@@ -17,10 +17,9 @@ export interface CreateBackgroundDto {
   title: string
   description?: string
   category_id?: number
-  file: File // Changed to File type for upload
+  user_create_id?: number
+  file?: File
 }
-
-type UpdateBackgroundDto = Partial<Omit<CreateBackgroundDto, 'file'>> // File not needed for updates
 
 const requestBuilder: IRequestBuilder = new RequestBuilder()
   .setPrefix('api')
@@ -58,7 +57,8 @@ export class BackgroundService {
 
   public async createBackground(data: CreateBackgroundDto): Promise<Background> {
     const formData = new FormData()
-    formData.append('file', data.file) // Append the file
+    if (data.file) formData.append('file', data.file)
+    if (data.user_create_id) formData.append('user_create_id', String(data.user_create_id))
     formData.append('title', data.title)
     if (data.description) formData.append('description', data.description)
     if (data.category_id) formData.append('category_id', String(data.category_id))
@@ -73,11 +73,25 @@ export class BackgroundService {
     return response
   }
 
-  public async updateBackground(id: number, data: UpdateBackgroundDto): Promise<Background> {
-    const response = await httpClient.patch<Background, UpdateBackgroundDto>({
+  public async updateBackground(
+    id: number,
+    data: Partial<CreateBackgroundDto>,
+  ): Promise<Background> {
+    const formData = new FormData()
+
+    if (data.file) formData.append('file', data.file)
+    if (data.title) formData.append('title', data.title)
+    if (data.description) formData.append('description', data.description)
+    if (data.category_id) formData.append('category_id', String(data.category_id))
+
+    const response = await httpClient.patch<Background, FormData>({
       url: this.requestBuilder.buildUrl(String(id)),
-      body: data,
+      body: formData,
+      config: {
+        headers: {'Content-Type': 'multipart/form-data'},
+      },
     })
+
     return response
   }
 
