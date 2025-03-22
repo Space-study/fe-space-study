@@ -13,32 +13,33 @@ import {toast} from 'sonner'
 const Header = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const [_user, setUser] = useState<{lastName: string; photo: {path: string}} | null>(null)
+  const [profile, setProfile] = useState<{lastName: string; photo: {path: string}} | null>(null)
   const {user, logout} = useUser()
   const profileService = useMemo(() => new ProfileService(), [])
-  const authService = new AuthService()
+  const authService = useMemo(() => new AuthService(), [])
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await profileService.getProfile()
-        setUser(data)
+        setProfile(data)
       } catch (error) {
-        toast.error('Failed to load profile' + error)
+        toast.error('Failed to load profile: ' + error)
       }
     }
     fetchProfile()
   }, [profileService])
 
   const handleLogout = async () => {
-    const confirmLogout = window.confirm('Are you sure you want to logout?')
-    if (confirmLogout) {
-      const response = await authService.logout()
-      if (response === undefined) {
+    if (window.confirm('Are you sure you want to logout?')) {
+      try {
+        await authService.logout()
         localStorage.removeItem('authToken')
         document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
         logout()
         window.location.reload()
+      } catch (error) {
+        toast.error('Logout failed: ' + error)
       }
     }
   }
@@ -47,14 +48,20 @@ const Header = () => {
     {href: '/', label: 'Home'},
     {href: '/meetings', label: 'Meetings'},
     {href: '/room', label: 'Room'},
-    // {href: '/example', label: 'Example Redux'},
     {href: '/blog', label: 'Blog'},
     {href: '/contact', label: 'Contact Us'},
+    {
+      label: 'FeedBack',
+      subItems: [
+        {href: '/rp-issue', label: 'Report Issue'},
+        {href: '/rp-issue/mine', label: 'My Report'},
+      ],
+    },
   ]
 
   return (
     <header
-      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md shadow-md z-50`}>
+      className={`${isHome ? 'fixed' : 'relative'} top-0 w-full bg-transparent backdrop-blur-md z-50`}>
       <div className='container mx-auto flex items-center justify-between py-4 px-6'>
         {/* Logo */}
         <Link href='/' className='text-2xl font-bold text-gray-900'>
@@ -64,11 +71,28 @@ const Header = () => {
         {/* Navigation */}
         <nav>
           <ul className='flex space-x-6'>
-            {navItems.map(item => (
-              <li key={item.href}>
-                <Link href={item.href} className='hover:text-red-500 transition duration-300'>
-                  {item.label}
-                </Link>
+            {navItems.map((item, index) => (
+              <li key={index} className='relative group'>
+                {item.subItems ? (
+                  <>
+                    <button className='hover:text-red-500 transition duration-300'>
+                      {item.label}
+                    </button>
+                    <ul className='absolute hidden group-hover:block bg-white text-black shadow-md mt-2 rounded-md'>
+                      {item.subItems.map((subItem, subIndex) => (
+                        <li key={subIndex}>
+                          <Link href={subItem.href} className='block px-4 py-2 hover:bg-gray-200'>
+                            {subItem.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <Link href={item.href} className='hover:text-red-500 transition duration-300'>
+                    {item.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -79,7 +103,7 @@ const Header = () => {
           {user ? (
             <div className='flex items-center gap-3'>
               <Avatar>
-                <AvatarImage src={_user?.photo?.path || '/default-avatar.png'} />
+                <AvatarImage src={profile?.photo?.path || '/default-avatar.png'} />
                 <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>

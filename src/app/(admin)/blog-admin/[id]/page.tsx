@@ -9,6 +9,11 @@ import Image from 'next/image'
 import type React from 'react'
 import {useEffect, useState} from 'react'
 
+enum BlogStatus {
+  ACCEPTED = 'accepted',
+  NOT_ACCEPTED = 'not accepted',
+}
+
 type User = {
   id: number
   firstName: string
@@ -32,6 +37,7 @@ type responseBlog = {
   lastname: string
   firstname: string
   comments: Comment[]
+  status: BlogStatus
 }
 
 export default function BlogPost({params}: {params: Promise<{id: number}>}) {
@@ -201,20 +207,37 @@ export default function BlogPost({params}: {params: Promise<{id: number}>}) {
         </div>
         {/* Accept Blog Button */}
         <div className='text-center'>
-          <Button
-            className='bg-green-500 hover:bg-green-600'
-            onClick={async () => {
-              try {
-                const {id} = await params
-                await axiosInstance.patch(`/api/v1/blogs/admin/${id}`, {status: 'accepted'})
-                alert('Blog accepted successfully!')
-              } catch (error) {
-                console.error('Failed to accept blog:', error)
-                alert('Failed to accept blog.')
-              }
-            }}>
-            Accept Blog
-          </Button>
+          {blog?.status === BlogStatus.NOT_ACCEPTED ? (
+            <Button
+              className='bg-green-500 hover:bg-green-600'
+              onClick={async () => {
+                try {
+                  const {id} = await params
+                  await axiosInstance.patch(`/api/v1/blogs/admin/${id}`, {status: 'accepted'})
+                  alert('Blog accepted successfully!')
+                } catch (error) {
+                  console.error('Failed to accept blog:', error)
+                  alert('Failed to accept blog.')
+                }
+              }}>
+              Accept Blog
+            </Button>
+          ) : (
+            <Button
+              className='bg-red-500 hover:bg-red-600'
+              onClick={async () => {
+                try {
+                  const {id} = await params
+                  await axiosInstance.patch(`/api/v1/blogs/admin/${id}`, {status: 'not accepted'})
+                  alert('Blog rejected successfully!')
+                } catch (error) {
+                  console.error('Failed to reject blog:', error)
+                  alert('Failed to reject blog.')
+                }
+              }}>
+              Reject Blog
+            </Button>
+          )}
         </div>
       </div>
     </article>
