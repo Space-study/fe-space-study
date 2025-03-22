@@ -1,6 +1,7 @@
 'use client'
 
 import {packageService} from '@/core/services/user/package-service'
+import { useUser } from '@src/app/shared/UserProvider'
 import {useEffect, useState} from 'react'
 
 interface PackageData {
@@ -16,10 +17,21 @@ interface PackageData {
 export default function PackagePage() {
   const [packages, setPackages] = useState<PackageData[]>([])
   const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null)
+  const {user} = useUser()
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
+        setSelectedPackage({
+          id: 0,
+          name: "Starter Plan",
+          description: "This is the most basic package to get you started.",
+          price: 99000,
+          duration: 1,
+          status: 'OPEN',
+          createdAt: new Date().toISOString(), 
+        })
+        
         const data = await packageService.getAllPackages()
         console.log('data', data)
 
@@ -44,10 +56,34 @@ export default function PackagePage() {
     fetchPackages()
   }, [])
 
-  const handleSelectPackage = (pkg: PackageData) => {
-    setSelectedPackage(pkg)
-    alert(`You have selected package: ${pkg.name}`)
+  const handleSelectPackage = async (pkg: PackageData) => {
+    const userEmail = user?.email
+  
+    try {
+      const res = await fetch("http://localhost:8000/api/payment/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          packageId: pkg.id,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert("Không tạo được link thanh toán!");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Đã xảy ra lỗi khi tạo thanh toán!");
+    }
   }
+  
 
   return (
     <div style={{padding: '2rem', backgroundColor: '#f4f6f8', minHeight: '100vh'}}>
@@ -78,7 +114,7 @@ export default function PackagePage() {
               <p style={{color: '#555', marginBottom: '1rem'}}>{pkg.description}</p>
               <div style={{marginBottom: '0.5rem', fontWeight: 500}}>
                 <span>Price: </span>
-                <span style={{color: '#2d9cdb'}}>${pkg.price}</span>
+                <span style={{color: '#2d9cdb'}}>{pkg.price}</span>(VND)
               </div>
               <div style={{marginBottom: '0.5rem'}}>
                 <strong>Duration:</strong> {pkg.duration} month(s)
