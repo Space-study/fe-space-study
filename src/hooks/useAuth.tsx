@@ -2,7 +2,7 @@
 import {useUser} from '@src/app/shared/UserProvider'
 import {AuthService} from '@src/core/services/auth/auth-service'
 import {usePathname, useRouter} from 'next/navigation'
-import {ReactNode, useEffect} from 'react'
+import {ReactNode, useEffect, useState} from 'react'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -11,22 +11,32 @@ interface AuthProviderProps {
 export function AuthProvider({children}: AuthProviderProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const {tokens, isAuthenticated, user, updateUser} = useUser()
+  const {user, updateUser} = useUser()
+  const [isLoading, setIsLoading] = useState(true) // Thêm state để theo dõi trạng thái loading
 
   useEffect(() => {
-    if (!user) {
-      const fetchUser = async () => {
-        try {
-          const authService = new AuthService()
-          const userData = await authService.getMe()
-          updateUser(userData)
-        } catch (err) {
-          console.log('Login to continue', err)
-        }
+    const fetchUser = async () => {
+      try {
+        const authService = new AuthService()
+        const userData = await authService.getMe()
+        updateUser(userData)
+        console.log('1')
+      } catch (err) {
+        console.log('Login to continue', err)
+      } finally {
+        setIsLoading(false) // Đặt isLoading về false khi fetch hoàn thành (thành công hoặc thất bại)
       }
-
-      fetchUser()
     }
+
+    if (!user) {
+      fetchUser()
+    } else {
+      setIsLoading(false) // Nếu đã có user, không cần fetch và đặt isLoading về false ngay lập tức
+    }
+  }, [user, updateUser])
+
+  useEffect(() => {
+    if (isLoading) return // Không làm gì nếu đang fetch user
 
     const publicRoute = [
       '/auth/login',
@@ -35,22 +45,19 @@ export function AuthProvider({children}: AuthProviderProps) {
       '/auth/forgot-password/confirm',
       '/auth/forgot-password/reset',
       '/',
-      '/blog',
-      '/meetings',
     ]
 
     if (!user) {
+      console.log('2') // Đặt console.log('2') ở đây để đảm bảo nó chạy sau khi fetch hoàn thành
       if (!publicRoute.includes(pathname)) {
         router.push('/auth/login')
       }
     }
+  }, [isLoading, user, pathname, router])
 
-    if (user) {
-      if (publicRoute.includes(pathname) && pathname !== '/blog') {
-        router.push('/')
-      }
-    }
-  }, [router, pathname, tokens, isAuthenticated])
+  if (isLoading) {
+    return <div>Loading...</div> // Hiển thị loading khi đang fetch user
+  }
 
   return <>{children}</>
 }

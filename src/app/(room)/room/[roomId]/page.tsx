@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import {roomService} from '@/core/services/user/list-room-service'
 import RoomPageClient from '@src/core/pages/customer/RoomPageClient'
-import { roomService } from '@/core/services/user/list-room-service'
+import {useRouter, useSearchParams} from 'next/navigation'
+import React, {useEffect, useState} from 'react'
 
 export default function RoomPage() {
   const router = useRouter()
@@ -28,14 +28,13 @@ export default function RoomPage() {
 
         if (roomData.privacy === 'private') {
           const isValid = await roomService.checkInviteLink(roomId, inviteLink)
- 
+
           console.log('Invite Link:', isValid.statusCode)
           if (isValid.statusCode !== 200) {
             router.push('/')
             return
           }
         }
-
       } catch (err) {
         console.error(err)
         setError('Room not found or access denied')
