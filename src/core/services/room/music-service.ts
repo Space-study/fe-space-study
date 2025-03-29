@@ -15,9 +15,10 @@ export interface CreateMusicDto {
   title: string
   category_id?: number
   path: string
+  user_create_id: number
 }
 
-type UpdateMusicDto = Partial<CreateMusicDto>
+export type UpdateMusicDto = Partial<CreateMusicDto>
 
 // Initialize RequestBuilder
 const requestBuilder: IRequestBuilder = new RequestBuilder()
@@ -62,10 +63,36 @@ export class MusicService {
     return response
   }
 
+  public async createMusicWithFile(formData: FormData): Promise<Music> {
+    const response = await httpClient.post<Music, FormData>({
+      url: this.requestBuilder.buildUrl(),
+      body: formData,
+      config: {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    })
+    return response
+  }
+
   public async updateMusic(id: number, data: UpdateMusicDto): Promise<Music> {
     const response = await httpClient.patch<Music, UpdateMusicDto>({
       url: this.requestBuilder.buildUrl(String(id)),
       body: data,
+    })
+    return response
+  }
+
+  public async updateMusicWithFile(id: number, formData: FormData): Promise<Music> {
+    const response = await httpClient.patch<Music, FormData>({
+      url: this.requestBuilder.buildUrl(String(id)),
+      body: formData,
+      config: {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
     })
     return response
   }
