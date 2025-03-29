@@ -89,7 +89,6 @@ export function BackgroundForm({background}: BackgroundFormProps) {
         if (!formData.file) throw new Error('Please select a file')
         if (!user?.id) throw new Error('User is not authenticated')
 
-        // **CREATE Background**: Include `user_create_id`
         await backgroundService.createBackground({
           title: formData.title,
           description: formData.description,
