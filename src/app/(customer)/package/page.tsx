@@ -1,7 +1,7 @@
 'use client'
 
 import {packageService} from '@/core/services/user/package-service'
-import { useUser } from '@src/app/shared/UserProvider'
+import {useUser} from '@src/app/shared/UserProvider'
 import {useEffect, useState} from 'react'
 
 interface PackageData {
@@ -24,14 +24,14 @@ export default function PackagePage() {
       try {
         setSelectedPackage({
           id: 0,
-          name: "Starter Plan",
-          description: "This is the most basic package to get you started.",
+          name: 'Starter Plan',
+          description: 'This is the most basic package to get you started.',
           price: 99000,
           duration: 1,
           status: 'OPEN',
-          createdAt: new Date().toISOString(), 
+          createdAt: new Date().toISOString(),
         })
-        
+
         const data = await packageService.getAllPackages()
         console.log('data', data)
 
@@ -58,29 +58,29 @@ export default function PackagePage() {
 
   const handleSelectPackage = async (pkg: PackageData) => {
     const userEmail = user?.email
-  
+
     try {
-      const res = await fetch("http://localhost:8000/api/payment/create", {
-        method: "POST",
+      const res = await fetch('http://localhost:8000/api/payment/create', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: userEmail,
           packageId: pkg.id,
         }),
-      });
-  
-      const data = await res.json();
-  
+      })
+
+      const data = await res.json()
+
       if (data?.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+        window.location.href = data.checkoutUrl
       } else {
-        alert("Không tạo được link thanh toán!");
+        alert('Không tạo được link thanh toán!')
       }
     } catch (error) {
-      console.error("Payment error:", error);
-      alert("Đã xảy ra lỗi khi tạo thanh toán!");
+      console.error('Payment error:', error)
+      alert('Đã xảy ra lỗi khi tạo thanh toán!')
     }
   }
   
