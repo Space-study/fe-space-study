@@ -60,7 +60,7 @@ export class RoomService {
 
   public async createRoom(data: CreateRoomDto): Promise<Room> {
     const formData = new FormData()
-    
+
     // Append all non-file fields
     formData.append('name', data.name)
     formData.append('privacy', data.privacy)
@@ -81,7 +81,7 @@ export class RoomService {
 
   public async updateRoom(id: number, data: CreateRoomDto): Promise<Room> {
     const formData = new FormData()
-    
+
     formData.append('name', data.name)
     formData.append('privacy', data.privacy)
     formData.append('maxMembers', String(data.maxMembers))

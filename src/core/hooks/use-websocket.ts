@@ -16,17 +16,15 @@ export const useWebSocket = (token: string) => {
         setIsConnected(true)
       })
 
-      socket.on('disconnect', () => {
+      socket.on('disconnect', reason => {
         setIsConnected(false)
       })
 
       socket.on('error', (error: Error) => {
-        console.error('Socket error:', error)
         setIsConnected(false)
       })
 
       socket.on('connect_error', error => {
-        console.error('Connection error:', error)
         setIsConnected(false)
       })
 
@@ -35,30 +33,48 @@ export const useWebSocket = (token: string) => {
       socket.on('userLeft', (data: any) => {})
 
       socket.on('newMessage', (message: Message) => {
-        addMessage({
-          id: message.id,
-          content: message.content,
-          sender: {
-            id: parseInt(message.user.id),
-            name: `${message.user.firstName} ${message.user.lastName}`.trim(),
-            avatar: message.user.avatar,
-          },
-          timestamp: message.createdAt,
-          status: 'sent',
-        })
+        try {
+          if (!message.id || !message.content) {
+            console.warn('Received invalid message', message)
+            return
+          }
+
+          addMessage({
+            id: message.id,
+            content: message.content,
+            sender: {
+              id: parseInt(message.user?.id || '0'),
+              name: `${message.user?.firstName || ''} ${message.user?.lastName || ''}`.trim(),
+              avatar: message.user?.avatar,
+            },
+            timestamp: message.createdAt,
+            status: 'sent',
+            isAiGenerated: message.isAiGenerated || false,
+          })
+        } catch (err) {
+          console.error('Error processing new message', err)
+        }
       })
     },
     [addMessage],
   )
 
   useEffect(() => {
-    if (!token) return
+    if (!token) {
+      return
+    }
 
     if (!socketRef.current) {
-      socketRef.current = io(process.env.NEXT_PUBLIC_WS_URL, {
+      const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL}/chats`
+
+      socketRef.current = io(wsUrl, {
         auth: {
           token,
         },
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
       })
 
       setupSocketHandlers(socketRef.current)
@@ -72,16 +88,14 @@ export const useWebSocket = (token: string) => {
     }
   }, [token, setupSocketHandlers])
 
-  const joinChat = useCallback(async (chatId: string) => {
+  const joinChat = useCallback(async (roomId: string) => {
     return new Promise((resolve, reject) => {
       if (!socketRef.current) {
-        console.error('Socket not connected when trying to join chat')
         return reject(new Error('Socket not connected'))
       }
 
-      socketRef.current.emit('joinChat', {chatId}, (response: any) => {
+      socketRef.current.emit('joinRoom', {roomId: Number(roomId)}, (response: any) => {
         if (response?.error) {
-          console.error('Error joining chat:', response.error)
           reject(new Error(response.error))
         } else {
           resolve(response)
@@ -90,13 +104,15 @@ export const useWebSocket = (token: string) => {
     })
   }, [])
 
-  const leaveChat = useCallback(async (chatId: string) => {
+  const leaveChat = useCallback(async (roomId: string) => {
     return new Promise((resolve, reject) => {
-      if (!socketRef.current) return reject('Socket not connected')
+      if (!socketRef.current) {
+        return reject(new Error('Socket not connected'))
+      }
 
-      socketRef.current.emit('leaveChat', {chatId}, (response: any) => {
-        if (response.error) {
-          reject(response.error)
+      socketRef.current.emit('leaveRoom', {roomId: Number(roomId)}, (response: any) => {
+        if (response?.error) {
+          reject(new Error(response.error))
         } else {
           resolve(response)
         }
@@ -104,31 +120,51 @@ export const useWebSocket = (token: string) => {
     })
   }, [])
 
-  const sendMessage = useCallback(async (chatId: string, content: string) => {
-    return new Promise<Message>((resolve, reject) => {
-      if (!socketRef.current) return reject('Socket not connected')
-
-      socketRef.current.emit('sendMessage', {data: {chatId, content}}, (response: any) => {
-        if (response.error) {
-          reject(response.error)
-        } else {
-          resolve(response)
+  const sendMessage = useCallback(
+    async (roomId: string, content: string, isAiGenerated = false) => {
+      return new Promise<Message>((resolve, reject) => {
+        if (!socketRef.current) {
+          return reject(new Error('Socket not connected'))
         }
-      })
-    })
-  }, [])
 
-  const getChatMessages = useCallback(async (chatId: string, page = 1, limit = 20) => {
+        const payload = {roomId: Number(roomId), content, isAiGenerated}
+
+        socketRef.current.emit('sendMessage', payload, (response: any) => {
+          if (response?.error) {
+            reject(new Error(response.error))
+          } else {
+            resolve(response)
+          }
+        })
+      })
+    },
+    [],
+  )
+
+  const getChatMessages = useCallback(async (roomId: string, page = 1, limit = 20) => {
     return new Promise<ChatMessagesResponse>((resolve, reject) => {
-      if (!socketRef.current) return reject('Socket not connected')
+      if (!socketRef.current) {
+        return reject(new Error('Socket not connected'))
+      }
 
-      socketRef.current.emit('getChatMessages', {chatId, page, limit}, (response: any) => {
-        if (response.error) {
-          reject(response.error)
-        } else {
-          resolve(response)
-        }
-      })
+      socketRef.current.emit(
+        'getRoomMessages',
+        {
+          roomId: Number(roomId),
+          page,
+          limit,
+        },
+        (response: any) => {
+          if (response?.error) {
+            reject(new Error(response.error))
+          } else {
+            resolve({
+              content: response.messages || [],
+              meta: response.pagination || {},
+            })
+          }
+        },
+      )
     })
   }, [])
 
@@ -139,5 +175,6 @@ export const useWebSocket = (token: string) => {
     sendMessage,
     getChatMessages,
     isConnected,
+    setIsConnected,
   }
 }

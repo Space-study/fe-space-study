@@ -9,7 +9,7 @@ const SwitchMenuButton: React.FC = () => {
     <Modal>
       <Modal.Open opens='SwitchMenu'>
         <ModalButton
-          icon={<Icon name='MultiImage' />}
+          icon={<Icon name='Calendar' />}
           tooltip='Switch Mode'
           onClick={function (): void {
             throw new Error('Function not implemented.')

@@ -12,6 +12,7 @@ export type Message = {
   }
   timestamp?: string
   status?: 'sending' | 'sent' | 'error'
+  isAiGenerated?: boolean
 }
 
 type ChatStore = {
@@ -32,17 +33,42 @@ export const useChatStore = create<ChatStore>()(
         setIsOpen: open => set({isOpen: open}),
         addMessage: message =>
           set(state => {
-            // Check if message with same ID already exists
-            const messageExists = state.messages.some(
-              msg =>
-                msg.id === message.id ||
-                (msg.id?.includes(message.id || '') && msg.content === message.content),
-            )
-
-            if (messageExists) {
-              return state // Don't add if message already exists
+            // Skip if the exact same message ID already exists
+            if (message.id && state.messages.some(msg => msg.id === message.id)) {
+              return state
             }
 
+            // For messages without IDs, use more careful content matching
+            // This is especially important for websocket messages that might come in twice
+            const isDuplicate =
+              message.id === undefined &&
+              state.messages.some(msg => {
+                // If both messages have content
+                if (msg.content === message.content) {
+                  // Same sender and AI status
+                  if (
+                    msg.sender.id === message.sender.id &&
+                    msg.isAiGenerated === message.isAiGenerated
+                  ) {
+                    // If no timestamps, consider it a duplicate
+                    if (!msg.timestamp || !message.timestamp) {
+                      return true
+                    }
+
+                    // If timestamps are within 10 seconds, consider it a duplicate
+                    const msgTime = new Date(msg.timestamp).getTime()
+                    const newMsgTime = new Date(message.timestamp).getTime()
+                    return Math.abs(msgTime - newMsgTime) < 10000
+                  }
+                }
+                return false
+              })
+
+            if (isDuplicate) {
+              return state
+            }
+
+            // Safe to add the message
             return {
               messages: [
                 ...state.messages,
@@ -65,7 +91,7 @@ export const useChatStore = create<ChatStore>()(
       }),
       {
         name: 'chat-storage',
-        partialize: state => ({messages: state.messages.slice(-50)}), // Keep only last 50 messages
+        partialize: state => ({messages: state.messages.slice(-50)}),
       },
     ),
   ),

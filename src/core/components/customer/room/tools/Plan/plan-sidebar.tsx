@@ -2,11 +2,28 @@
 
 import {Card, CardContent, CardHeader} from '@/core/components/ui/card'
 import {ScanEye} from 'lucide-react'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import ProjectManagement from './ProjectManagement'
 import TagManagement from './TagManagement'
 
 export function PlanSidebar(): JSX.Element {
+  const [roomId, setRoomId] = useState<number | null>(null)
+
+  useEffect(() => {
+    // Extract the room ID from the URL path
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname
+      const roomMatch = pathname.match(/\/room\/(\d+)/)
+      if (roomMatch && roomMatch[1]) {
+        const id = Number(roomMatch[1])
+        console.log('Extracted room ID from URL:', id)
+        setRoomId(id)
+      } else {
+        console.warn('Could not extract room ID from pathname:', pathname)
+      }
+    }
+  }, [])
+
   return (
     <Card className='h-full w-64 flex flex-col bg-white shadow-md'>
       <CardHeader className='border-b'>
@@ -18,8 +35,14 @@ export function PlanSidebar(): JSX.Element {
         </div>
       </CardHeader>
       <CardContent className='flex-1 overflow-auto space-y-6'>
-        <ProjectManagement />
-        <TagManagement />
+        {roomId ? (
+          <>
+            <ProjectManagement roomId={roomId} userId={1} />
+            <TagManagement />
+          </>
+        ) : (
+          <div className='text-sm text-muted-foreground'>Loading room data...</div>
+        )}
       </CardContent>
     </Card>
   )

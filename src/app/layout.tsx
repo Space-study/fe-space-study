@@ -1,7 +1,6 @@
 'use client'
 
 import {store} from '@src/core/redux/store'
-import {AuthProvider} from '@src/hooks/useAuth'
 import React from 'react'
 import {Toaster} from 'react-hot-toast'
 import {Provider} from 'react-redux'
@@ -14,16 +13,14 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang='en'>
       <body className='flex flex-col min-h-screen'>
         <UserProvider>
-          <AuthProvider>
-            <ThemeProvider
-              // attribute='class'
-              // defaultTheme='system'
-              enableSystem
-              disableTransitionOnChange>
-              <Provider store={store}>{children}</Provider>
-              <Toaster />
-            </ThemeProvider>
-          </AuthProvider>
+          <ThemeProvider
+            // attribute='class'
+            // defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange>
+            <Provider store={store}>{children}</Provider>
+            <Toaster />
+          </ThemeProvider>
         </UserProvider>
       </body>
     </html>

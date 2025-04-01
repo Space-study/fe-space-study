@@ -3,7 +3,7 @@ import BackgroundButton from '@/core/components/customer/room/tools/Background'
 // import Logo from './Logo';
 import React from 'react'
 // import Menus from './Menus';
-import Calendar from '@/core/components/customer/room/tools/Calendar'
+// import Calendar from '@/core/components/customer/room/tools/Calendar'
 import Expand from '@/core/components/customer/room/tools/Expand'
 import OutRoom from '@/core/components/customer/room/tools/OutRoom'
 import SoundModal from '@/core/components/customer/room/tools/Sound/SoundModal'
@@ -26,7 +26,7 @@ const Header: React.FC = () => {
           <MusicButton />
         </Menus> */}
         <SoundModal />
-        <Calendar />
+        {/* <Calendar /> */}
         <TodoListContent />
         <Time />
         <OutRoom />
