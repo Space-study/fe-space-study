@@ -12,8 +12,8 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import {NavMain} from '@src/core/components/admin/sidebarAdmin/nav-main'
-import {NavUser} from '@src/core/components/admin/sidebarAdmin/nav-user'
+import { NavMain } from '@src/core/components/admin/sidebarAdmin/nav-main'
+import { NavUser } from '@src/core/components/admin/sidebarAdmin/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -134,10 +134,15 @@ const data = {
       url: '/chat',
       icon: MessageCircle,
     },
+    {
+      title: 'Reports',
+      url: '/ad-issues',
+      icon: ScanEye,
+    }
   ],
 }
 
-export function AdminSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader className='py-5'>

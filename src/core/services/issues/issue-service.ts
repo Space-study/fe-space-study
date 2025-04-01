@@ -2,13 +2,13 @@ import {httpClient} from '@src/core/utils/axios'
 import {RequestBuilder} from '@src/core/utils/axios/request-builder'
 
 interface IssueResponse {
-  id: number
+  report_id: number
   reporter_id: number
   reason_title: string
   reason_description: string
   status: string
   created_at: string
-  updatedAt: string
+  updated_at: string
 }
 
 interface CreateIssueDto {

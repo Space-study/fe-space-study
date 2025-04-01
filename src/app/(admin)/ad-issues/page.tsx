@@ -25,13 +25,13 @@ import {AlertCircle} from 'lucide-react'
 import {useEffect, useState} from 'react'
 
 interface IssueResponse {
-  id: number
+  report_id: number
   reporter_id: number
   reason_title: string
   reason_description: string
   status: string
   created_at: string
-  updatedAt: string
+  updated_at: string
 }
 
 enum IssueStatus_Report {
@@ -103,12 +103,12 @@ export default function AdminReportIssuesPage() {
 
     try {
       const issueService = new IssueService()
-      const {status} = await issueService.statusUpdateIssue(selectedIssue.id, newStatus)
+      const {status} = await issueService.statusUpdateIssue(selectedIssue.report_id, newStatus)
 
       if (status === 200) {
         setIssues(prevIssues =>
           prevIssues.map(issue =>
-            issue.id === selectedIssue.id ? {...issue, status: newStatus} : issue,
+            issue.report_id === selectedIssue.report_id ? {...issue, status: newStatus} : issue,
           ),
         )
         setSelectedIssue(prev => prev && {...prev, status: newStatus})
@@ -166,7 +166,7 @@ export default function AdminReportIssuesPage() {
             <TableBody>
               {issues.map(issue => (
                 <TableRow
-                  key={issue.id}
+                  key={issue.report_id}
                   onClick={() => handleRowClick(issue)}
                   className='cursor-pointer hover:bg-gray-100'>
                   <TableCell className='font-medium'>{issue.reason_title}</TableCell>
