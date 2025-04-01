@@ -19,6 +19,8 @@ export interface CreateRoomDto {
   maxMembers: number
   imageUrl?: string
   category?: string
+  status: 'active' | 'inactive' | 'pending'
+  file?: File
 }
 
 export interface JoinRoomDto {
@@ -31,8 +33,6 @@ export interface JoinStateDto {
   statusCode: number
   message: string
 }
-
-type UpdateRoomDto = Partial<CreateRoomDto>
 
 const requestBuilder: IRequestBuilder = new RequestBuilder()
   .setPrefix('api')
@@ -59,17 +59,44 @@ export class RoomService {
   }
 
   public async createRoom(data: CreateRoomDto): Promise<Room> {
-    return await httpClient.post<Room, CreateRoomDto>({
+    const formData = new FormData()
+    
+    // Append all non-file fields
+    formData.append('name', data.name)
+    formData.append('privacy', data.privacy)
+    formData.append('maxMembers', String(data.maxMembers))
+    if (data.category) formData.append('category', data.category)
+    formData.append('status', data.status)
+    if (data.file) formData.append('file', data.file)
+
+    const response = await httpClient.post<Room, FormData>({
       url: this.requestBuilder.buildUrl(),
-      body: data,
+      body: formData,
+      config: {
+        headers: {'Content-Type': 'multipart/form-data'},
+      },
     })
+    return response
   }
 
-  public async updateRoom(id: number, data: UpdateRoomDto): Promise<Room> {
-    return await httpClient.patch<Room, UpdateRoomDto>({
+  public async updateRoom(id: number, data: CreateRoomDto): Promise<Room> {
+    const formData = new FormData()
+    
+    formData.append('name', data.name)
+    formData.append('privacy', data.privacy)
+    formData.append('maxMembers', String(data.maxMembers))
+    if (data.category) formData.append('category', data.category)
+    formData.append('status', data.status)
+    if (data.file) formData.append('file', data.file)
+
+    const response = await httpClient.patch<Room, FormData>({
       url: this.requestBuilder.buildUrl(String(id)),
-      body: data,
+      body: formData,
+      config: {
+        headers: {'Content-Type': 'multipart/form-data'},
+      },
     })
+    return response
   }
 
   public async deleteRoom(id: number): Promise<void> {
