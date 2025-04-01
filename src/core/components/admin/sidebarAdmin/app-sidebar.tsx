@@ -116,6 +116,10 @@ const data = {
       icon: Video,
       items: [
         {
+          title: 'Rooms',
+          url: 'rooms',
+        },
+        {
           title: 'Background',
           url: 'backgrounds',
         },

@@ -7,7 +7,7 @@ interface IssueResponse {
   reason_title: string
   reason_description: string
   status: string
-  createdAt: string
+  created_at: string
   updatedAt: string
 }
 
@@ -18,10 +18,15 @@ interface CreateIssueDto {
   status: string
 }
 
+interface UpdateIssueDto {
+  reason_title: string
+  reason_description: string
+}
+
 const issueRequestBuilder = new RequestBuilder()
   .setPrefix('api')
   .setVersion('v1')
-  .setResourcePath('issues')
+  .setResourcePath('report-issue')
 
 export class IssueService {
   private readonly requestBuilder = issueRequestBuilder
@@ -51,6 +56,37 @@ export class IssueService {
       return {data: response, status: 200}
     } catch (error) {
       console.error('Error fetching issues:', error)
+      return {data: undefined, status: 500}
+    }
+  }
+
+  public async updateIssue(
+    id: number,
+    data: UpdateIssueDto,
+  ): Promise<{data: IssueResponse | undefined; status: number}> {
+    try {
+      const response = await httpClient.patch<IssueResponse, UpdateIssueDto>({
+        url: this.requestBuilder.buildUrl(`${id}`),
+        body: data,
+      })
+
+      return {data: response, status: 200}
+    } catch (error) {
+      console.error('Error updating issue:', error)
+      return {data: undefined, status: 500}
+    }
+  }
+
+  public async statusUpdateIssue(id: number, status: string) {
+    try {
+      const response = await httpClient.patch<IssueResponse, {status: string}>({
+        url: this.requestBuilder.buildUrl(`admin-update/${id}`),
+        body: {status},
+      })
+
+      return {data: response, status: 200}
+    } catch (error) {
+      console.error('Error updating issue status:', error)
       return {data: undefined, status: 500}
     }
   }
