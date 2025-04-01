@@ -3,14 +3,13 @@
 import {ProfileService, ProfileType} from '@/core/services/auth/auth'
 import {resetPasswordSchema, type ResetPasswordData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
+import {useUser} from '@src/app/shared/UserProvider'
 import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from '@src/core/components/ui/breadcrumb'
 import {Button} from '@src/core/components/ui/button'
 import {
@@ -27,7 +26,7 @@ import {Label} from '@src/core/components/ui/label'
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@src/core/components/ui/tabs'
-import {useSearchParams} from 'next/navigation'
+import {Eye, EyeOff} from 'lucide-react' // Import icon
 import {useEffect, useMemo, useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {toast} from 'sonner'
@@ -35,10 +34,12 @@ import {toast} from 'sonner'
 export default function SettingSetting() {
   const [profile, setProfile] = useState<ProfileType | null>(null)
   const [loading, setLoading] = useState(false)
-  const searchParams = useSearchParams()
-  const token = searchParams?.get('token')
+  const {tokens} = useUser()
+  const token = tokens?.token
   const profileService = useMemo(() => new ProfileService(), [])
+  const [showPassword, setShowPassword] = useState(false)
 
+  console.log(token)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -89,7 +90,6 @@ export default function SettingSetting() {
     }
   }
 
-  // Cập nhật giá trị khi người dùng chỉnh sửa input
   const handleChange = (field: keyof ProfileType, value: string) => {
     if (!profile) return
     setProfile({...profile, [field]: value})
@@ -103,11 +103,7 @@ export default function SettingSetting() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href='#'>Others</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className='hidden md:block' />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Setting</BreadcrumbPage>
+                <BreadcrumbLink href='account'>Account</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -118,7 +114,7 @@ export default function SettingSetting() {
           <div className='mx-auto h-full w-full rounded-xl bg-muted/50'>
             <TabsList className='grid grid-cols-10'>
               <TabsTrigger value='profile'>My Profile</TabsTrigger>
-              <TabsTrigger value='password'>Password</TabsTrigger>
+              <TabsTrigger value='password'>Reset Password</TabsTrigger>
             </TabsList>
           </div>
           <div className='mx-auto h-full w-full rounded-xl bg-muted/50'>
@@ -133,7 +129,7 @@ export default function SettingSetting() {
                     <>
                       <div className='flex items-center space-x-4'>
                         <div className='flex flex-row items-center space-x-5'>
-                          <Avatar>
+                          <Avatar className='h-24 w-24'>
                             <AvatarImage
                               src={profile.photo?.path || 'https://github.com/shadcn.png'}
                             />
@@ -254,30 +250,35 @@ export default function SettingSetting() {
                         render={({field}) => (
                           <FormItem>
                             <Label htmlFor='new'>New password</Label>
-                            <FormControl>
-                              <Input
-                                id='new'
-                                type='password'
-                                className={
-                                  form.formState.errors.password
-                                    ? 'border-red-500'
-                                    : 'border-gray-300'
-                                }
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
+                            <div className='relative'>
+                              <FormControl>
+                                <Input
+                                  id='new'
+                                  type={showPassword ? 'text' : 'password'}
+                                  className={`pr-10 ${
+                                    form.formState.errors.password
+                                      ? 'border-red-500'
+                                      : 'border-gray-300'
+                                  }`}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <button
+                                type='button'
+                                className='absolute right-2 top-2 text-gray-400 hover:text-gray-600'
+                                onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                              </button>
+                            </div>
+                            {form.formState.errors.password && (
+                              <FormMessage>{form.formState.errors.password.message}</FormMessage>
+                            )}
                           </FormItem>
                         )}
                       />
                     </CardContent>
                     <CardFooter className='flex justify-end space-x-2'>
-                      <Button
-                        variant='destructive'
-                        type='button'
-                        onClick={() => {
-                          form.reset()
-                        }}>
+                      <Button variant='destructive' type='button' onClick={() => form.reset()}>
                         Cancel
                       </Button>
                       <Button type='submit' disabled={form.formState.isSubmitting}>

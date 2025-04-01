@@ -3,8 +3,8 @@
 import {
   BookOpenCheck,
   Dock,
-  EllipsisVertical,
   Landmark,
+  MessageCircle,
   ScanEye,
   SquareTerminal,
   UserRoundPen,
@@ -12,8 +12,8 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import {NavMain} from '@/core/components/admin/sidebar/nav-main'
-import {NavUser} from '@/core/components/admin/sidebar/nav-user'
+import {NavMain} from '@src/core/components/admin/sidebarAdmin/nav-main'
+import {NavUser} from '@src/core/components/admin/sidebarAdmin/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -29,25 +29,13 @@ const data = {
   navMain: [
     {
       title: 'DashBoard',
-      url: '#',
+      url: '/dashboard',
       icon: SquareTerminal,
-      items: [
-        {
-          title: 'Statics',
-          url: 'dashboard',
-        },
-      ],
     },
     {
       title: 'User Management',
-      url: '#',
+      url: '/user',
       icon: UserRoundPen,
-      items: [
-        {
-          title: 'List',
-          url: 'user',
-        },
-      ],
     },
     {
       title: 'Managing Learning Spaces',
@@ -142,24 +130,14 @@ const data = {
       ],
     },
     {
-      title: 'Others',
-      url: '#',
-      icon: EllipsisVertical,
-      items: [
-        {
-          title: 'Setting',
-          url: 'setting',
-        },
-        {
-          title: 'Chat',
-          url: 'chat',
-        },
-      ],
+      title: 'Chat Admin',
+      url: '/chat',
+      icon: MessageCircle,
     },
   ],
 }
 
-export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader className='py-5'>

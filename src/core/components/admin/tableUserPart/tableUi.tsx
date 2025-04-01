@@ -68,7 +68,7 @@ export function TableUi<TData extends {id: number}, TValue>({
     <div className='space-y-4'>
       {/* Toolbar */}
       <DataTableToolbar table={table} />
-      <div className='rounded-md border'>
+      <div className='rounded-md border bg-white'>
         <Table aria-label='Data Table'>
           {/* Table Header */}
           <TableHeader>

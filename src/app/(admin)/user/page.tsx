@@ -20,7 +20,7 @@ export default function UserManage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href='/user'>User List</BreadcrumbLink>
+                <BreadcrumbLink href='user'>User Managerment</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

@@ -18,8 +18,20 @@ export const statuses = [
     icon: ShieldCheck,
   },
   {
-    value: 'Banned',
-    label: 'Banned',
+    value: 'Inactive',
+    label: 'Inactive',
+    icon: ShieldBan,
+  },
+]
+export const roles = [
+  {
+    value: 'Admin',
+    label: 'Admin',
+    icon: ShieldCheck,
+  },
+  {
+    value: 'User',
+    label: 'User',
     icon: ShieldBan,
   },
 ]
@@ -42,6 +54,9 @@ export function DataTableToolbar<TData>({table}: DataTableToolbarProps<TData>) {
             title='Status'
             options={statuses}
           />
+        )}
+        {table.getColumn('role') && (
+          <DataTableFacetedFilter column={table.getColumn('role')} title='Role' options={roles} />
         )}
         {isFiltered && (
           <Button

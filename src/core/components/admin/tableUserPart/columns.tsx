@@ -13,8 +13,8 @@ export const statuses = [
     icon: ShieldCheck,
   },
   {
-    value: 'Banned',
-    label: 'Banned',
+    value: 'Inactive',
+    label: 'Inactive',
     icon: ShieldBan,
   },
 ]
@@ -70,12 +70,20 @@ export const columns: ColumnDef<UserType>[] = [
     accessorKey: 'role',
     header: ({column}) => <DataTableColumnHeader column={column} title='Role' />,
     cell: ({row}) => <div className='w-[120px]'>{row.original.role.name}</div>,
+    filterFn: (row, id, value) => {
+      const rowValue = row.getValue(id)
+      if (typeof rowValue === 'object' && rowValue !== null && 'name' in rowValue) {
+        return value.includes((rowValue as {name: string}).name)
+      }
+    },
   },
   {
     accessorKey: 'status',
     header: ({column}) => <DataTableColumnHeader column={column} title='Status' />,
     cell: ({row}) => {
-      const status = statuses.find(status => status.value === row.original.status.name)
+      const statusName = row.original.status?.name
+      const status = statuses.find(status => status.value === statusName)
+
       if (!status) return <div className='w-[100px]'>Unknown</div>
       return (
         <div className='flex w-[100px] items-center'>
@@ -85,7 +93,10 @@ export const columns: ColumnDef<UserType>[] = [
       )
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      const rowValue = row.getValue(id)
+      if (typeof rowValue === 'object' && rowValue !== null && 'name' in rowValue) {
+        return value.includes((rowValue as {name: string}).name)
+      }
     },
   },
   {

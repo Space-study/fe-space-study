@@ -83,7 +83,6 @@ export default function PackagePage() {
       alert('Đã xảy ra lỗi khi tạo thanh toán!')
     }
   }
-  
 
   return (
     <div style={{padding: '2rem', backgroundColor: '#f4f6f8', minHeight: '100vh'}}>
