@@ -1,7 +1,6 @@
 'use client'
 
-// import type React from 'react'
-
+import {useUser} from '@src/app/shared/UserProvider'
 import {MessageList} from '@src/core/components/customer/room/tools/chat/message-list'
 import {Alert, AlertDescription, AlertTitle} from '@src/core/components/ui/alert'
 import {Button} from '@src/core/components/ui/button'
@@ -21,8 +20,8 @@ export function ChatAdminWidget() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  const token = localStorage.getItem('authToken')
-
+  const {tokens} = useUser()
+  const token = tokens?.token
   const {socket, joinChat, leaveChat, sendMessage, getChatMessages, isConnected} = useWebSocket(
     token || '',
   )

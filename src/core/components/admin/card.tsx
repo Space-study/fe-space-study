@@ -17,13 +17,14 @@ const StatsCard = (props: React.HTMLAttributes<HTMLDivElement>) => {
   const [totalBlogs, setTotalBlogs] = useState<number>(0)
   const [newUsers, setNewUsers] = useState<number>(0)
 
-  const blogService = new BlogService()
   const currentDate = new Date()
   const currentMonth = currentDate.getMonth()
   const currentYear = currentDate.getFullYear()
 
   useEffect(() => {
     const fetchData = async () => {
+      const blogService = new BlogService()
+
       try {
         const [dataUsers, dataRooms, dataBlogs] = await Promise.all([
           userService.getAllUsers().catch(err => {
@@ -60,7 +61,7 @@ const StatsCard = (props: React.HTMLAttributes<HTMLDivElement>) => {
     }
 
     fetchData()
-  }, [])
+  }, [currentMonth, currentYear])
 
   const statsData: StaticData[] = [
     {title: 'Total Users', value: totalUsers},

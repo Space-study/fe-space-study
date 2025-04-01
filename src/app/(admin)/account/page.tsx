@@ -3,6 +3,7 @@
 import {ProfileService, ProfileType} from '@/core/services/auth/auth'
 import {resetPasswordSchema, type ResetPasswordData} from '@/core/utils/validation/auth'
 import {zodResolver} from '@hookform/resolvers/zod'
+import {useUser} from '@src/app/shared/UserProvider'
 import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
 import {
   Breadcrumb,
@@ -33,7 +34,8 @@ import {toast} from 'sonner'
 export default function SettingSetting() {
   const [profile, setProfile] = useState<ProfileType | null>(null)
   const [loading, setLoading] = useState(false)
-  const token = localStorage.getItem('authToken')
+  const {tokens} = useUser()
+  const token = tokens?.token
   const profileService = useMemo(() => new ProfileService(), [])
   const [showPassword, setShowPassword] = useState(false)
 

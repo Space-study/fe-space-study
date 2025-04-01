@@ -2,12 +2,12 @@
 
 import ErrorBoundary from '@src/app/shared/ErrorBoundary'
 import LoadingPage from '@src/app/shared/LoadingPage'
-import {AppSidebar} from '@src/core/components/admin/sideBar/app-sidebar'
 import {SidebarProvider} from '@src/core/components/ui/sidebar'
 import {Toaster} from '@src/core/components/ui/sonner'
 import {AuthProvider} from '@src/hooks/useAuth'
 import {usePathname} from 'next/navigation'
 import React, {Suspense} from 'react'
+import {AdminSidebar} from '../../core/components/admin/sidebarAdmin/app-sidebar'
 
 export default function RootLayout({
   children,
@@ -15,14 +15,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
-  const isVideoCall = pathname?.startsWith('/chat/')
+  const isVideoCall = pathname?.startsWith('/chat/1')
 
   return (
     <AuthProvider>
       <SidebarProvider>
         <ErrorBoundary>
           <Suspense fallback={<LoadingPage />}>
-            {!isVideoCall && <AppSidebar />}
+            {!isVideoCall && <AdminSidebar />}
             {children}
             <Toaster />
           </Suspense>

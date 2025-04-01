@@ -1,19 +1,12 @@
-// import {Avatar, AvatarFallback, AvatarImage} from '@src/core/components/ui/avatar'
-// import {Badge} from '@src/core/components/ui/badge'
+import {ChatAdminWidget} from '@/core/components/admin/chatAdmin/chatAdmin-widget'
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
 } from '@src/core/components/ui/breadcrumb'
-// import {Button} from '@src/core/components/ui/button'
-// import {Card} from '@src/core/components/ui/card'
-// import {Input} from '@src/core/components/ui/input'
-// import {ScrollArea} from '@src/core/components/ui/scroll-area'
 import {Separator} from '@src/core/components/ui/separator'
 import {SidebarInset, SidebarTrigger} from '@src/core/components/ui/sidebar'
-// import {Image, Mic, MoreVertical, Paperclip, Phone, Send, Smile, Video} from 'lucide-react'
-import {ChatAdminWidget} from '@/core/components/admin/chatAdmin/chatAdmin-widget'
 import React from 'react'
 const ChatInterface = () => {
   return (
