@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@src/core/components/ui/sidebar'
-import {BadgeCheck, Bell, ChevronsUpDown, LogOut} from 'lucide-react'
+import {BadgeCheck, ChevronsUpDown, LogOut} from 'lucide-react'
 import {useEffect, useMemo, useState} from 'react'
 import {toast} from 'sonner'
 
@@ -103,10 +103,6 @@ export function NavUser() {
               <DropdownMenuItem onClick={() => (window.location.href = '/account')}>
                 <BadgeCheck className='mr-2 h-4 w-4' />
                 Account
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => (window.location.href = '/notification')}>
-                <Bell className='mr-2 h-4 w-4' />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
 

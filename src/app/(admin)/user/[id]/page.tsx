@@ -110,11 +110,11 @@ export default function ProfilePage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href='User'>User List</BreadcrumbLink>
+              <BreadcrumbLink href='user'>User Managerment</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Detail</BreadcrumbPage>
+              <BreadcrumbPage>{detail?.firstName + ' ' + detail?.lastName}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -136,6 +136,12 @@ export default function ProfilePage() {
                     {detail.lastName?.[0]}
                   </AvatarFallback>
                 </Avatar>
+                <div className='flex flex-col space-y-1'>
+                  <Label htmlFor='userName'>
+                    {detail.firstName} {detail.lastName}
+                  </Label>
+                  <Label htmlFor='email'>{detail.email}</Label>
+                </div>
                 <input
                   type='file'
                   accept='image/*'
@@ -163,7 +169,9 @@ export default function ProfilePage() {
                     }
                   }}
                 />
-                <Button onClick={() => fileInputRef.current?.click()}>Upload Photo</Button>
+                <Button variant='outline' onClick={() => fileInputRef.current?.click()}>
+                  Upload Photo
+                </Button>
               </div>
 
               <div>

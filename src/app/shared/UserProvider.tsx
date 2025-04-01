@@ -1,3 +1,4 @@
+'use client'
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react'
 
 interface UserRole {

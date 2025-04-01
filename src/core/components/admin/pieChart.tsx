@@ -1,77 +1,62 @@
 'use client'
 
-import {TrendingUp} from 'lucide-react'
+import {roomService} from '@/core/services/user/list-room-service'
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@src/core/components/ui/card'
+import {ChartContainer, ChartTooltip, ChartTooltipContent} from '@src/core/components/ui/chart'
 import * as React from 'react'
 import {Label, Pie, PieChart} from 'recharts'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@src/core/components/ui/card'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@src/core/components/ui/chart'
-
-const chartData = [
-  {browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)'},
-  {browser: 'safari', visitors: 200, fill: 'var(--color-safari)'},
-  {browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)'},
-  {browser: 'edge', visitors: 173, fill: 'var(--color-edge)'},
-  {browser: 'other', visitors: 190, fill: 'var(--color-other)'},
-]
-
-const chartConfig = {
-  visitors: {
-    label: 'Visitors',
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))',
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))',
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))',
-  },
-  edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))',
-  },
-  other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))',
-  },
-} satisfies ChartConfig
-
 export default function PieChartDonut() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
+  const [chartData, setChartData] = React.useState<
+    Array<{category: string; count: number; fill: string}>
+  >([])
+  const [topCategory, setTopCategory] = React.useState('')
+
+  React.useEffect(() => {
+    async function fetchRooms() {
+      try {
+        const dataRooms = await roomService.getAllRooms()
+        const categoryCount = dataRooms.reduce((acc: {[key: string]: number}, room) => {
+          acc[room.category] = (acc[room.category] || 0) + 1
+          return acc
+        }, {})
+
+        const transformedData = Object.keys(categoryCount).map((category, index) => ({
+          category,
+          count: categoryCount[category],
+          fill: `hsl(var(--chart-${index + 1}))`, // Adjust colors dynamically
+        }))
+
+        setChartData(transformedData)
+        const topCategoryEntry = Object.entries(categoryCount).reduce(
+          (max, curr) => (curr[1] > max[1] ? curr : max),
+          ['', 0],
+        )
+        setTopCategory(topCategoryEntry[0])
+      } catch (err) {
+        console.error('Failed to fetch rooms:', err)
+      }
+    }
+    fetchRooms()
   }, [])
+
+  const totalVisitors = React.useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.count, 0)
+  }, [chartData])
 
   return (
     <Card className='flex flex-col h-full'>
       <CardHeader className='items-center'>
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Category Distribution</CardTitle>
       </CardHeader>
       <CardContent className='flex-1'>
-        <ChartContainer config={chartConfig} className='mx-auto h-full'>
+        <ChartContainer className='mx-auto h-full' config={{}}>
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie
               data={chartData}
-              dataKey='visitors'
-              nameKey='browser'
+              dataKey='count'
+              nameKey='category'
               innerRadius={60}
               strokeWidth={5}>
               <Label
@@ -93,7 +78,7 @@ export default function PieChartDonut() {
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className='fill-muted-foreground'>
-                          Visitors
+                          Categories
                         </tspan>
                       </text>
                     )
@@ -106,11 +91,9 @@ export default function PieChartDonut() {
       </CardContent>
       <CardFooter className='flex-col gap-2 text-sm mt-auto'>
         <div className='flex items-center gap-2 font-medium leading-none'>
-          Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
+          Most popular category: {topCategory}
         </div>
-        <div className='leading-none text-muted-foreground'>
-          Showing total visitors for the last 6 months
-        </div>
+        <div className='leading-none text-muted-foreground'>Showing category distribution</div>
       </CardFooter>
     </Card>
   )

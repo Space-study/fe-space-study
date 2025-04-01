@@ -39,11 +39,11 @@ export function DataTablePagination<TData>({table}: DataTablePaginationProps<TDa
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={value => table.setPageSize(Number(value))}>
-            <SelectTrigger className='h-8 w-[70px]'>
+            <SelectTrigger className='h-8 w-[70px] bg-white'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
-              {[15, 30, 50].map(pageSize => (
+              {[10, 30, 50].map(pageSize => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -51,25 +51,24 @@ export function DataTablePagination<TData>({table}: DataTablePaginationProps<TDa
             </SelectContent>
           </Select>
         </div>
-        <div className='flex items-center space-x-2'>
+        <div className='flex items-center space-x-2 '>
           <Button
             variant='outline'
-            className='hidden h-8 w-8 p-0 lg:flex'
+            className='hidden h-8 w-8 p-0 lg:flex bg-white'
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}>
             <ChevronsLeft />
           </Button>
           <Button
             variant='outline'
-            className='h-8 w-8 p-0'
+            className='h-8 w-8 p-0 bg-white'
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}>
             <ChevronLeft />
           </Button>
 
-          {/* Input nhập số trang */}
           <Input
-            className='h-8 w-12 text-center text-sm'
+            className='h-8 w-12 text-center text-sm bg-white'
             value={pageInput}
             onChange={e => setPageInput(e.target.value)}
             onBlur={handlePageChange}
@@ -86,7 +85,7 @@ export function DataTablePagination<TData>({table}: DataTablePaginationProps<TDa
           </Button>
           <Button
             variant='outline'
-            className='hidden h-8 w-8 p-0 lg:flex'
+            className='hidden h-8 w-8 p-0 lg:flex bg-white'
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}>
             <ChevronsRight />
