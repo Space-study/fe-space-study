@@ -4,7 +4,7 @@ import {Badge} from '@/core/components/ui/badge'
 import {Button} from '@/core/components/ui/button'
 import {Card, CardContent, CardFooter} from '@/core/components/ui/card'
 import {roomService} from '@src/core/services/user/list-room-service'
-import {Heart, Link as LinkIcon} from 'lucide-react'
+import {Heart} from 'lucide-react'
 import Image from 'next/image'
 import {useRouter} from 'next/navigation'
 import {useState} from 'react'
@@ -25,33 +25,38 @@ interface CardProps {
 
 const MeetingCard = ({data}: CardProps) => {
   const [favorite, setFavorite] = useState<boolean>(false)
-  const [copied, setCopied] = useState<boolean>(false)
+  // const [copied, setCopied] = useState<boolean>(false)
 
   const router = useRouter()
 
-  const generateShareableLink = () => {
-    if (!data || !data.id) return ''
-
-    const baseUrl = window.location.origin
-
-    if (data.privacy === 'public') {
-      return `${baseUrl}/room/${data.id}`
-    }
-
-    if (data.privacy === 'private' && data.inviteLink) {
-      return `${baseUrl}/room/${data.id}?inviteLink=${encodeURIComponent(data.inviteLink)}`
-    }
-
-    return `${baseUrl}/room/${data.id}`
+  // Only render if status is active
+  if (data.status !== 'active' || data.privacy !== 'public') {
+    return null
   }
 
-  const shareLink = generateShareableLink()
+  // const generateShareableLink = () => {
+  //   if (!data || !data.id) return ''
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareLink)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  //   const baseUrl = window.location.origin
+
+  //   if (data.privacy === 'public') {
+  //     return `${baseUrl}/room/${data.id}`
+  //   }
+
+  //   if (data.privacy === 'private' && data.inviteLink) {
+  //     return `${baseUrl}/room/${data.id}?inviteLink=${encodeURIComponent(data.inviteLink)}`
+  //   }
+
+  //   return `${baseUrl}/room/${data.id}`
+  // }
+
+  // const shareLink = generateShareableLink()
+
+  // const copyToClipboard = () => {
+  //   navigator.clipboard.writeText(shareLink)
+  //   setCopied(true)
+  //   setTimeout(() => setCopied(false), 2000)
+  // }
 
   const handleFavoriteToggle = (event: React.MouseEvent) => {
     event.stopPropagation()
@@ -62,7 +67,6 @@ const MeetingCard = ({data}: CardProps) => {
   const handleJoinRoom = async () => {
     try {
       await roomService.joinRoom({id: data.id, userId: 123, inviteLink: data.inviteLink})
-      alert('Joined successfully!')
       router.push(`/room/${data.id}?inviteLink=${encodeURIComponent(data.inviteLink || '')}`)
     } catch (err) {
       alert(`Error: ${err}`)
@@ -107,7 +111,7 @@ const MeetingCard = ({data}: CardProps) => {
       <CardFooter className='pt-0 pb-4 px-4 flex flex-col gap-2'>
         <div className='text-sm text-muted-foreground'>Max {data.count} members</div>
 
-        {data.privacy === 'private' && data.inviteLink && (
+        {/* {data.privacy === 'private' && data.inviteLink && (
           <div className='flex items-center space-x-2 w-full'>
             <input
               type='text'
@@ -124,7 +128,7 @@ const MeetingCard = ({data}: CardProps) => {
               {copied ? 'Copied!' : 'Copy'}
             </Button>
           </div>
-        )}
+        )} */}
       </CardFooter>
     </Card>
   )
