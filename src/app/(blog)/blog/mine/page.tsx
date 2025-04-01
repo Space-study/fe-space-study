@@ -24,6 +24,12 @@ export default function Page() {
     blog_id: number
     firstname: string
     lastname: string
+    status: BlogStatus
+  }
+
+  enum BlogStatus {
+    ACCEPTED = 'accepted',
+    NOT_ACCEPTED = 'not accepted',
   }
 
   const [blogs, setBlogs] = useState<Blog[]>([])

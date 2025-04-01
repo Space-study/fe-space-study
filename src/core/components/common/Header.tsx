@@ -44,10 +44,24 @@ const Header = () => {
     }
   }
 
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+  let closeTimeout: NodeJS.Timeout
+
+  const handleMouseEnter = () => {
+    clearTimeout(closeTimeout) // Clear any pending close action
+    setIsFeedbackOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    closeTimeout = setTimeout(() => {
+      setIsFeedbackOpen(false)
+    }, 1000) // 1 second delay before closing
+  }
+
   const navItems = [
     {href: '/', label: 'Home'},
     {href: '/meetings', label: 'Meetings'},
-    {href: '/room', label: 'Room'},
+    ...(user ? [{href: '/room', label: 'Room'}] : []),
     {href: '/blog', label: 'Blog'},
     {href: '/contact', label: 'Contact Us'},
     {
@@ -72,13 +86,20 @@ const Header = () => {
         <nav>
           <ul className='flex space-x-6'>
             {navItems.map((item, index) => (
-              <li key={index} className='relative group'>
+              <li
+                key={index}
+                className='relative group'
+                onMouseEnter={item.label === 'FeedBack' ? handleMouseEnter : undefined}
+                onMouseLeave={item.label === 'FeedBack' ? handleMouseLeave : undefined}>
                 {item.subItems ? (
                   <>
                     <button className='hover:text-red-500 transition duration-300'>
                       {item.label}
                     </button>
-                    <ul className='absolute hidden group-hover:block bg-white text-black shadow-md mt-2 rounded-md'>
+                    <ul
+                      className={`absolute bg-white text-black shadow-md mt-2 rounded-md transition-opacity duration-300 ${
+                        isFeedbackOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                      }`}>
                       {item.subItems.map((subItem, subIndex) => (
                         <li key={subIndex}>
                           <Link href={subItem.href} className='block px-4 py-2 hover:bg-gray-200'>
