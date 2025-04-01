@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Button} from '@/core/components/ui/button'
 import {Card, CardContent, CardHeader} from '@/core/components/ui/card'
 import {Checkbox} from '@/core/components/ui/checkbox'
 import {Input} from '@/core/components/ui/input'
 import {Label} from '@/core/components/ui/label'
 import {RadioGroup, RadioGroupItem} from '@/core/components/ui/radio-group'
-import {Plus, Search} from 'lucide-react'
-import React, {useState} from 'react'
+import {labelService} from '@src/core/services/plan/label'
+import {Plus, Search, Trash2} from 'lucide-react'
+import React, {useEffect, useState} from 'react'
 
 interface Tag {
   id: number
@@ -146,7 +148,7 @@ const TagCreator: React.FC<TagCreatorProps> = ({onCreateTag, onClose}) => {
   const handleCreate = () => {
     if (tagName.trim()) {
       onCreateTag({
-        name: tagName,
+        name: tagName.trim(),
         emoji: selectedEmoji,
         color: selectedColor,
         isDefault,
@@ -215,14 +217,82 @@ const TagCreator: React.FC<TagCreatorProps> = ({onCreateTag, onClose}) => {
 }
 
 const TagManagement: React.FC = () => {
-  const [tags, setTags] = useState<Tag[]>([
-    {id: 1, name: 'haha', emoji: '😄'},
-    {id: 2, name: 'home', emoji: '✏️'},
-  ])
+  const [tags, setTags] = useState<Tag[]>([])
   const [showTagCreator, setShowTagCreator] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleCreateTag = (newTag: Omit<Tag, 'id'>) => {
-    setTags([...tags, {id: Date.now(), ...newTag}])
+  // Fetch labels from the API on component mount
+  const fetchTags = async () => {
+    setLoading(true)
+    try {
+      // Example: page 1, limit 100
+      const response = await labelService.getPaginatedLabels({page: 1, limit: 100})
+      // Assuming the response shape: { data: { items: Label[], total, page, limit } }
+      const items = (response as any) || []
+      // Map each label: split the name into emoji and tag name; description holds the color.
+      const mappedTags: Tag[] = items.map((item: any) => {
+        // Expect label name to be formatted as "emoji tagName", e.g., "😆 TagName"
+        const parts = item.name.split(' ')
+        let emoji = ''
+        let name = item.name
+        if (parts.length > 1 && /^[\u{1F300}-\u{1F6FF}]/u.test(parts[0])) {
+          emoji = parts[0]
+          name = parts.slice(1).join(' ')
+        }
+        return {
+          id: item.id,
+          name: name,
+          emoji: emoji,
+          color: item.description,
+        }
+      })
+      setTags(mappedTags)
+    } catch (error) {
+      console.error('Failed to fetch tags:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTags()
+  }, [])
+
+  // Create a new label via the API and update state
+  const handleCreateTag = async (newTag: Omit<Tag, 'id'>) => {
+    try {
+      // Combine emoji and name here for the API call
+      const payload = {
+        name: `${newTag.emoji} ${newTag.name}`,
+        description: newTag.color || '',
+      }
+      const createdLabel = await labelService.createLabel(payload)
+
+      // When mapping the response, split properly
+      const parts = createdLabel.name.split(' ')
+      const emoji = parts[0]
+      const name = parts.slice(1).join(' ')
+
+      const mappedTag: Tag = {
+        id: createdLabel.id,
+        name: name,
+        emoji: emoji,
+        color: createdLabel.description,
+      }
+      setTags(prev => [...prev, mappedTag])
+    } catch (error) {
+      console.error('Failed to create tag:', error)
+    }
+  }
+
+  // Delete a label via the API and update state
+  const handleDeleteTag = async (id: number) => {
+    try {
+      await labelService.deleteLabel(id)
+      setTags(prev => prev.filter(tag => tag.id !== id))
+    } catch (error) {
+      console.error('Failed to delete tag:', error)
+    }
   }
 
   return (
@@ -236,27 +306,40 @@ const TagManagement: React.FC = () => {
 
       {showTagCreator && (
         <TagCreator
-          onCreateTag={tag => {
-            handleCreateTag(tag)
+          onCreateTag={async tag => {
+            await handleCreateTag(tag)
             setShowTagCreator(false)
           }}
           onClose={() => setShowTagCreator(false)}
         />
       )}
 
-      <div className='space-y-2'>
-        <div className='flex items-center space-x-2'>
-          <Checkbox id='all-tags' defaultChecked />
-          <Label htmlFor='all-tags'>All</Label>
-        </div>
-        {tags.map(tag => (
-          <div key={tag.id} className='flex items-center space-x-2'>
-            <Checkbox id={`tag-${tag.id}`} />
-            <span>{tag.emoji}</span>
-            <Label htmlFor={`tag-${tag.id}`}>{tag.name}</Label>
+      {loading ? (
+        <p>Loading tags...</p>
+      ) : (
+        <div className='space-y-2'>
+          <div className='flex items-center space-x-2'>
+            <Checkbox id='all-tags' defaultChecked />
+            <Label htmlFor='all-tags'>All</Label>
           </div>
-        ))}
-      </div>
+          {tags.map(tag => (
+            <div key={tag.id} className='flex items-center space-x-2'>
+              <Checkbox id={`tag-${tag.id}`} />
+
+              <div
+                className='flex items-center px-2 py-1 rounded-lg text-white'
+                style={{backgroundColor: tag.color}}>
+                <span className='mr-1'>{tag.emoji}</span>
+                <span>{tag.name}</span>
+              </div>
+
+              <Button variant='ghost' size='icon' onClick={() => handleDeleteTag(tag.id)}>
+                <Trash2 className='h-4 w-4' />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

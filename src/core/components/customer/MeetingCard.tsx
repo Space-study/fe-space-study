@@ -67,6 +67,7 @@ const MeetingCard = ({data}: CardProps) => {
   const handleJoinRoom = async () => {
     try {
       await roomService.joinRoom({id: data.id, userId: 123, inviteLink: data.inviteLink})
+      // alert('Joined successfully!')
       router.push(`/room/${data.id}?inviteLink=${encodeURIComponent(data.inviteLink || '')}`)
     } catch (err) {
       alert(`Error: ${err}`)

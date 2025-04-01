@@ -26,6 +26,7 @@ export interface Message {
   chat: Chat
   createdAt: string
   updatedAt: Date
+  isAiGenerated?: boolean
 }
 
 export interface ChatMessagesResponse {
