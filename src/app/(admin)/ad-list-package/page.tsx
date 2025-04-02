@@ -104,10 +104,19 @@ export default function AllPackagesPage() {
                           <strong>Created at:</strong> {new Date(pkg.created_at).toLocaleString()}
                         </span>
 
-                        <Link href={`/ad-edit-package/${pkg.package_id}`}>
-                          <Button>Edit</Button>
-                        </Link>
-                        <Button onClick={() => handleDelete(pkg.package_id)}>Delete</Button>
+                        <div className="mt-4 flex gap-2">
+  <Link href={`/ad-edit-package/${pkg.package_id}`}>
+    <Button size="sm">Edit</Button>
+  </Link>
+  <Button
+    variant="destructive"
+    size="sm"
+    onClick={() => handleDelete(pkg.package_id)}
+  >
+    Delete
+  </Button>
+</div>
+
                       </div>
                     </Card>
                   )

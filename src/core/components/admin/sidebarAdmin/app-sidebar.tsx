@@ -70,12 +70,12 @@ const data = {
           url: '#',
         },
         {
-          title: 'Team',
-          url: '#',
+          title: 'Voucher',
+          url: 'voucher',
         },
         {
-          title: 'Billing',
-          url: '#',
+          title: 'Package',
+          url: 'ad-list-package',
         },
         {
           title: 'Limits',
