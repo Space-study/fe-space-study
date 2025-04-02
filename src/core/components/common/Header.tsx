@@ -71,6 +71,8 @@ const Header = () => {
         {href: '/rp-issue/mine', label: 'My Report'},
       ],
     },
+    {href: '/package', label: 'Package'},
+    {href: '/chat-ai', label: 'Chat AI'},
   ]
 
   return (
@@ -123,17 +125,20 @@ const Header = () => {
         <div className='flex items-center gap-4'>
           {user ? (
             <div className='flex items-center gap-3'>
-              <Avatar>
-                <AvatarImage src={profile?.photo?.path || '/default-avatar.png'} />
-                <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
-              </Avatar>
-              <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-semibold'>{user?.lastName || 'Guest'}</span>
-                <span className='truncate text-xs'>{user?.email || 'guest@example.com'}</span>
-              </div>
-              <Button variant='ghost' className='hover:text-red-500' onClick={handleLogout}>
-                Logout
-              </Button>
+             <Link href="/user-profile" className="flex items-center gap-3">
+  <Avatar>
+    <AvatarImage src={profile?.photo?.path || '/default-avatar.png'} />
+    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+  </Avatar>
+  <div className="grid flex-1 text-left text-sm leading-tight">
+    <span className="truncate font-semibold">{user?.lastName || 'Guest'}</span>
+    <span className="truncate text-xs">{user?.email || 'guest@example.com'}</span>
+  </div>
+</Link>
+<Button variant="ghost" className="hover:text-red-500" onClick={handleLogout}>
+  Logout
+</Button>
+
             </div>
           ) : (
             <Button asChild variant='ghost' className='hover:text-red-500'>
